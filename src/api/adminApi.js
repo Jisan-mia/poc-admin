@@ -22,7 +22,7 @@ const handleUserLogin = async (data) => {
   }
 }
 
-
+// to get all student list
 const getAllStudentList = async () => {
   try{
     const res = await axios.get(`https://www.exam.poc.ac/api/student_info/`)
@@ -37,7 +37,7 @@ const getAllStudentList = async () => {
   }
 }
 
-
+// delete an student from the whole system 
 const deleteStudent = async (phone) => {
   try{
     const res = await axios.delete(`https://www.exam.poc.ac/api/delete_user/${phone}`)
@@ -52,6 +52,7 @@ const deleteStudent = async (phone) => {
   }
 }
 
+// block a student for sometime
 const blockStudent = async (data) => {
 
   const getFormData = object => Object.keys(object).reduce((formData, key) => {
