@@ -11,12 +11,6 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/Home.vue'),
     },
-
-    {
-        path: '/login-register',
-        name: 'LoginRegister',
-        component: () => import('@/views/LoginRegister.vue'),
-    },
     {
         path: '/login',
         name: 'Login',
@@ -25,68 +19,12 @@ const routes = [
             layout: AuthLayout
         }
     },
-    {
-        path: '/register',
-        name: 'Register',
-        component: lazyLoadLogin('Register'),
-        meta: {
-            layout: AuthLayout
-        }
-    },
 
     // student routes 
-    {
-        path: '/dashboard',
-        name: 'Dashboard',
-        component: lazyLoadExam('Dashboard'),
-        meta: {
-            layout: AppLayout
-        }
-    },
-    {
-        path: '/exam-pack',
-        name: 'Exam_Pack',
-        component: lazyLoadExam('Exam_Pack'),
-        meta: {
-            layout: AppLayout
-        }
-    },
-    {
-        path: '/exam-pack/:packTitle',
-        name: 'ExamUnpack',
-        component: lazyLoadExam('ExamUnpack'),
-        props: true,
-        meta: {
-            layout: AppLayout
-        }
-    },
-    {
-        path: '/exam/:examId',
-        name: 'ExamPage',
-        component: lazyLoadExam('ExamPage'),
-        props: true,
-    },
-    
-    {
-        path: '/reporting',
-        name: 'Reporting',
-        component: lazyLoadExam('Reporting'),
-        meta: {
-            layout: AppLayout
-        }
-    },
     {
         path: '/reporting/:examId',
         name: 'SpecificExamReport',
         component: lazyLoadExam('SpecificExamReport'),
-        meta: {
-            layout: AppLayout
-        }
-    },
-    {
-        path: '/student-management',
-        name: 'StudentManagement',
-        component: lazyLoadExam('StudentManagement'),
         meta: {
             layout: AppLayout
         }
@@ -100,17 +38,9 @@ const routes = [
         }
     },
 
-    {
-        path: '/edit-profile',
-        name: 'EditProfile',
-        component: lazyLoadExam('EditProfile'),
-        meta: {
-            layout: AppLayout
-        }
-    },
     // admin routes
     {
-        path: '/admin/dashboard',
+        path: '/dashboard',
         name: 'AdminDashboard',
         component: lazyLoadAdmin('AdminDashboard'),
         meta: {
@@ -118,7 +48,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/exam-pack',
+        path: '/exam-pack',
         name: 'AdminExam_Pack',
         component: lazyLoadAdmin('AdminExam_Pack'),
         meta: {
@@ -126,7 +56,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/exam-management',   
+        path: '/exam-management',   
         name: 'AdminExamManagement',
         component: lazyLoadAdmin('AdminExamManagement'),
         meta: {
@@ -134,7 +64,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/student-management',   
+        path: '/student-management',   
         name: 'AdminStudentManagement',
         component: lazyLoadAdmin('AdminStudentManagement'),
         meta: {
@@ -142,7 +72,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/reporting',   
+        path: '/reporting',   
         name: 'AdminReporting',
         component: lazyLoadAdmin('AdminReporting'),
         meta: {
@@ -150,7 +80,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/user-management',
+        path: '/user-management',
         name: 'AdminUserManagement',
         component: lazyLoadAdmin('AdminUserManagement'),
         meta: {
@@ -158,7 +88,7 @@ const routes = [
         }
     },
     {
-        path: '/admin/account-management',
+        path: '/account-management',
         name: 'AdminAccountManagement',
         component: lazyLoadAdmin('AdminAccountManagement'),
         meta: {

@@ -34,14 +34,8 @@ export default {
       <span class="bigSpan"><img alt="Vue logo" class= "poc_logo" src="@/assets/poc_logo.svg" /></span>
     </h1>
 
-    <span v-if="position == 'user'">
-      <SidebarLink to="/dashboard" icon="fas fa-home">Dashboard</SidebarLink>
-      <SidebarLink to="/exam-pack" icon="fas fa-columns">Exam Pack</SidebarLink>
-      <SidebarLink to="/reporting" icon="fas fa-chart-bar">Reporting</SidebarLink>
-      <SidebarLink to="/edit-profile" icon="fas fa-cog">Edit Profile</SidebarLink>
-    </span>
 
-    <span v-else-if="position == 'admin'">
+    <span v-if="position == 'admin'">
       <SidebarLink to="/admin/dashboard" icon="fas fa-home">Dashboard</SidebarLink>
       <SidebarLink to="/admin/exam-pack" icon="fas fa-columns">Exam Pack</SidebarLink>
       <SidebarLink to='/admin/exam-management' icon="fas fa-user-circle">Exam Management</SidebarLink>
