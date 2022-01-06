@@ -2,13 +2,13 @@
 <div>
   <div class="container">
     <div class="wrapper">
-      <CustomAdminBtn v-if="isAdmin"  type="info" icon="fas fa-plus" @onClick="this.$emit('handleAddExamPack')" >
+      <CustomAdminBtn type="info" icon="fas fa-plus" @onClick="this.$emit('handleAddExamPack')" >
        <span> Add Exam Pack </span>
       </CustomAdminBtn>
     </div>
   <div class="pack_container">
     <div v-for="examPack in examPacks" :key="examPack.id"  class="card" >
-      <ExamPackCard :outline="isAdmin" @examPackClick="onExamPackClick" :examPack="examPack"/>
+      <ExamPackCard :outline="true" @examPackClick="onExamPackClick" :examPack="examPack"/>
     </div>
     </div>
   </div>
@@ -90,11 +90,9 @@ export default {
           image: ''
         }
       ])
-      
-      const isAdmin = ref(false);
+    
       const route = useRoute();
       const router = useRouter();
-      isAdmin.value = route.path.includes('admin');
 
       const onExamPackClick = (examPack) => {
         // console.log('clicked', examPack)
@@ -117,7 +115,6 @@ export default {
 
       return {
         examPacks,
-        isAdmin,
         onExamPackClick
       }
   }

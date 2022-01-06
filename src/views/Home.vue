@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <router-link :to='{name: "LoginRegister"}'>
+    <router-link :to='{name: "Login"}'>
       <h2>
-        Go to Login/register
+        Go to Login
       </h2>
     </router-link>
   </div>

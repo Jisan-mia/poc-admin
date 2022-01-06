@@ -5,9 +5,9 @@
 <script>
 import StudentProfile from "../../components/Exam Management/StudentProfile.vue"
 
-export default {
-  components: { StudentProfile } ,
-  name: 'SpecificStudent'
+export default{
+  name: 'AdminSpecificStudent',
+  components: { StudentProfile }, 
 }
 </script>
 

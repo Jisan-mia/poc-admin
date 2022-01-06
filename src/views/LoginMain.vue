@@ -1,37 +1,31 @@
 <template>
-  <div class="login_cont" v-if="currentStep === 'login'">
+  <div class="login_cont">
     <h3>
-      Login
+      Admin Login
     </h3>
 
     <form @submit.prevent="handleUserLogin">
       <CustomPhoneInput v-model="userAuthInput.phoneNumber" placeholder="Enter your phone number" />
       <CustomAuthInput v-model="userAuthInput.password" placeholder="Enter your password" type="text"/>
 
-      <p>
-        Don’t have an account? <router-link  :to="{name: 'Register'}"> <span class="special"> Register </span></router-link>
-        <br />
-        <span @click="handleForgotStep" class="special"> Forgot Password</span>
-      </p>
-
       <CustomLoginRegisterBtn  buttonText="Login" />
     </form>
   </div>
-    <SendOtp v-else/>
 </template>
 
 <script>
 import { computed, ref } from '@vue/reactivity'
-import CustomAuthInput from '../../components/Auth Components/CustomAuthInput.vue'
-import CustomPhoneInput from '../../components/Auth Components/CustomPhoneInput.vue'
-import CustomLoginRegisterBtn from '../../components/ui/CustomLoginRegisterBtn.vue'
-import SendOtp from '../../components/Auth Components/SendOtp.vue'
+import CustomAuthInput from '@/components/Auth Components/CustomAuthInput.vue'
+import CustomPhoneInput from '@/components/Auth Components/CustomPhoneInput.vue'
+import CustomLoginRegisterBtn from '@/components/ui/CustomLoginRegisterBtn.vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default {
-  components: { CustomAuthInput, CustomPhoneInput, CustomLoginRegisterBtn, SendOtp },
-  name: 'Login',
+  components: { CustomAuthInput, CustomPhoneInput, CustomLoginRegisterBtn },
+  name: 'LoginMain',
   setup() {
     const store = useStore();
+    const router = useRouter()
     const user = computed(() => store.state.user)
     console.log(user.value)
 
@@ -40,23 +34,16 @@ export default {
       phoneNumber: '',
       password: ''
     })
-    const loginSteps = ref(['login', 'sendOtp']);
-    const currentStep = ref('login')
-
-    const handleForgotStep = () => {
-      currentStep.value = 'sendOtp'
-    }
 
 
     const handleUserLogin = () => {
       console.log('handle user login func called')
-    }
+      router.push('/dashboard')
+    } 
 
     return {
       userAuthInput,
       handleUserLogin,
-      handleForgotStep,
-      currentStep
     }
   }
 }
@@ -64,7 +51,7 @@ export default {
 
 <style lang="scss" scoped>
 .login_cont {
-  height: calc(100vh - 125px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

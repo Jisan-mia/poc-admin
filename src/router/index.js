@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AppLayout from '../layouts/AppLayout.vue'
-import AuthLayout from '../layouts/AuthLayout.vue'
-const lazyLoadExam = (view) => () => import(`@/views/Exam Management/${view}.vue`);
-const lazyLoadLogin = (view) => () => import(`@/views/Login Register/${view}.vue`);
+import AppLayout from '../layouts/AppLayout.vue';
+// const lazyLoadExam = (view) => () => import(`@/views/Exam Management/${view}.vue`);
+const lazyLoadLogin = (view) => () => import(`@/views/${view}.vue`);
 const lazyLoadAdmin = (view) => () => import(`@/views/Admin/${view}.vue`);
 const routes = [
     // general routes
@@ -15,24 +14,21 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: lazyLoadLogin('Login'),
-        meta: {
-            layout: AuthLayout
-        }
     },
 
     // student routes 
     {
         path: '/reporting/:examId',
         name: 'SpecificExamReport',
-        component: lazyLoadExam('SpecificExamReport'),
+        component: lazyLoadAdmin('AdminSpecificExamReport'),
         meta: {
             layout: AppLayout
         }
     },
     {
-        path: '/student/:studentId',
+        path: '/student-management/:studentId',
         name: 'SpecificStudent',
-        component: lazyLoadExam('SpecificStudent'),
+        component: lazyLoadAdmin('AdminSpecificStudent'),
         meta: {
             layout: AppLayout
         }

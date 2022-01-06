@@ -5,8 +5,10 @@
 <script>
 import SpecificExamReportComp from '../../components/Exam Management/SpecificExamReportComp.vue'
 export default {
-  components: { SpecificExamReportComp },
-  name: "SpecificExamReport"
+  name: 'AdminSpecificExamReport',
+  components: {
+    SpecificExamReportComp
+}
 }
 </script>
 

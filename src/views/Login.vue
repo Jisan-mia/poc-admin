@@ -29,10 +29,7 @@
       
      <div class="wrapper">
         
-        <div class="btns">
-            <CustomLoginRegisterBtn buttonText="Login" :outline="false" @click="handleLoginRoute"/>
-            <CustomLoginRegisterBtn buttonText="Register" :outline="true" @click="handleRegisterRoute"/>
-        </div>
+        <LoginMain />
      </div>
     </div>
   </div>
@@ -40,10 +37,10 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router'
-import CustomLoginRegisterBtn from '../components/ui/CustomLoginRegisterBtn.vue'
+import LoginMain from './LoginMain.vue';
 export default {
-  components: { CustomLoginRegisterBtn },
-  name: 'LoginRegister',
+  components: { LoginMain },
+  name: 'Login',
   setup(props, ctx) {
     const router = useRouter();
 
