@@ -4,13 +4,13 @@
       <AdminCustomInput label="Name" v-model="user.name" placeholder="Enter Name"/>
       <AdminCustomInput label="Email Address" v-model="user.email" placeholder="Enter Email Address"/>
       <AdminCustomInput label="Password" v-model="user.password" placeholder="Enter Password"/>
-
-      <div class="select">
+      <AdminCustomInput :disabled="true" v-if="isEditUser" label="Position" v-model="user.position" placeholder="Position"/>
+      
+      <div class="select" v-if="!isEditUser">
         <label>Position</label>
         <select name="position" id="position" v-model="user.position">
           <option selected disabled value="">Select Position</option>
-          <option value="Admin">Admin</option>
-          <option value="User">User</option>
+          <option value="Admin">Staff</option>
         </select>
       </div>
 

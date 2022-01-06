@@ -98,4 +98,12 @@ const router = createRouter({
     routes
 })
 
+// router.beforeEach((to, from, next) => {
+//     const isAuthenticated = false;
+//     const loginViews = () => to.name === 'Login';
+//     if (!loginViews() && !isAuthenticated) next({ name: 'Login' })
+//     else next()
+// })
+
+
 export default router
