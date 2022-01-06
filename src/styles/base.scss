@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+body, *{
+  margin: 0;
+  padding: 0;
+}
+
+*{
+  font-family: 'Montserrat', sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+select {
+  width: 100%;
+  vertical-align: middle;
+  background: #fff
+    url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E")
+    no-repeat right 12px center;
+  background-size: 8px 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  &:disabled{
+    cursor: none;
+    opacity: 0.83;
+  }
+}
+select:focus {
+  border-color: #00A9DC;
+  outline: 0;
+}
+select:focus::ms-value {
+  color: #000;
+  background: #fff;
+}
+select::ms-expand {
+  opacity: 0;
+}
