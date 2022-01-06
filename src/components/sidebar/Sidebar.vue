@@ -6,9 +6,8 @@ export default {
   props: {},
   components: { SidebarLink },
   setup() {
-    const position = 'admin';
   
-    return { position,toggleActive, isActive }
+    return { toggleActive, isActive }
   }
 }
 </script>
@@ -22,7 +21,8 @@ export default {
 
   <div :class="['sidebar', isActive ? 'active' : '']">
     
-    <h1>
+    <span>
+      <h1>
       <span class="crossBar__parent" v-if="isActive">
         <img alt="Vue logo" class= "poc_logo2" src="@/assets/poc_logo_small.png" />
 
@@ -35,7 +35,7 @@ export default {
     </h1>
 
 
-    <span v-if="position == 'admin'">
+    <span>
       <SidebarLink to="/dashboard" icon="fas fa-home">Dashboard</SidebarLink>
       <SidebarLink to="/exam-pack" icon="fas fa-columns">Exam Pack</SidebarLink>
       <SidebarLink to='/exam-management' icon="fas fa-user-circle">Exam Management</SidebarLink>
@@ -58,11 +58,16 @@ export default {
         </div>
       </SidebarLink>
     </span>
-
-    <span v-else>
-
     </span>
 
+
+    <span class="logout">
+      <SidebarLink to="/logout" icon="fas fa-sign-out-alt">Logout</SidebarLink>
+    </span>
+
+
+
+    
     
 <!-- 
     <span
@@ -111,11 +116,15 @@ export default {
   transition: 0.3s ease;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   @include maxMedia(768px) {
     left: -300px;
   }
 }
 
+.logout {
+  margin-bottom:0.9rem;
+  }
 .sidebar.active {
   left: 0px;
 }

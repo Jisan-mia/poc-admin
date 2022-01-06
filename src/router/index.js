@@ -5,15 +5,27 @@ const lazyLoadLogin = (view) => () => import(`@/views/${view}.vue`);
 const lazyLoadAdmin = (view) => () => import(`@/views/Admin/${view}.vue`);
 const routes = [
     // general routes
+    
     {
         path: '/',
         name: 'Home',
         component: () => import('@/views/Home.vue'),
     },
+    { 
+        path: "/:pathMatch(.*)*", 
+        name: 'PageNotFound',
+        component: () => import('@/components/ui/PageNotFound.vue')
+    },
     {
         path: '/login',
         name: 'Login',
         component: lazyLoadLogin('Login'),
+    },
+
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: () => import('@/views/Logout.vue'),
     },
 
     // student routes 
