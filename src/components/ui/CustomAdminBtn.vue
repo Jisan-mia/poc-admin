@@ -1,5 +1,10 @@
 <template>
-  <button :disabled="disabled" :class="[type, rounded && 'round']" @click="$emit('onClick')">
+  <button 
+    :disabled="disabled" 
+    :class="[type, rounded && 'round']"
+    @click="$emit('onClick')"
+    v-bind="$attrs"
+  >
     <i v-if="icon" class="icon" :class="icon" />
     <span class="text">
       <slot />

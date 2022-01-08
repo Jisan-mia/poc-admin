@@ -104,9 +104,9 @@ const routes = [
         }
     },
     {
-        path: '/batch-setting',
-        name: 'AdminBatchSetting',
-        component: lazyLoadAdmin('AdminBatchSetting'),
+        path: '/batch-settings',
+        name: 'AdminBatchSettings',
+        component: lazyLoadAdmin('AdminBatchSettings'),
         meta: {
             layout: AppLayout
         }
