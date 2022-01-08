@@ -54,6 +54,12 @@ export default {
             <span class="text">
               Account Management 
             </span>
+          </SidebarLink>
+
+          <SidebarLink :isNested="true" to="/batch-settings" icon="fas fa-circle"> 
+            <span class="text">
+              Batch Settings
+            </span>
           </SidebarLink>  
         </div>
       </SidebarLink>

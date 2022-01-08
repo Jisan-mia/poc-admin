@@ -103,6 +103,14 @@ const routes = [
             layout: AppLayout
         }
     },
+    {
+        path: '/batch-setting',
+        name: 'AdminBatchSetting',
+        component: lazyLoadAdmin('AdminBatchSetting'),
+        meta: {
+            layout: AppLayout
+        }
+    },
 ]
 
 const router = createRouter({
