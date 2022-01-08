@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="item1">
+    <div class="item1 item1-res">
       <div class="img__container">
         <img src="/images/logo.svg" alt="">
 
@@ -66,10 +66,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/config.scss';
+
+.item1-res {
+  @include maxMedia(768px) {
+    display: none !important;
+  }
+}
 .container {
   height: 100vh;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+   @include maxMedia(768px) {
+      grid-template-columns: 1fr;
+    }
+
+    
   .item1{
     background: linear-gradient(45.01deg, #146AB4 9.93%, #00D4FE 88.64%);
     width: 100%;
@@ -121,6 +133,9 @@ export default {
     .wrapper{
       width: 55%;
       margin: 0 auto;
+      @include maxMedia(768px) {
+        width:100%;
+    }
     }
   }
 }

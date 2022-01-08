@@ -1,16 +1,27 @@
 <template>
   <div class="home">
-    <router-link :to='{name: "Login"}'>
+    loading..
+    <!-- <router-link :to='{name: "Login"}'>
       <h2>
         Go to Login
       </h2>
-    </router-link>
+    </router-link> -->
   </div>
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 export default {
   name: "Home",
+  setup() {
+    const router = useRouter();
+
+    router.push('/login')
+
+    return {
+
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

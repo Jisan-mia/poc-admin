@@ -90,6 +90,7 @@ export default {
     justify-content: center;
     align-items: flex-start;
     gap: 0.9rem;
+    width: 100%;
 
     h3 {
       font-weight: bold;
@@ -98,8 +99,9 @@ export default {
       color: #00A9DC;
     }
     .output__container {
+      width: 100%;
       display: grid;
-      grid-template-columns: repeat(auto-fi, minmax(250px, 300px));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
       justify-content: flex-start;
       gap: 1rem;
 
@@ -112,7 +114,7 @@ export default {
         .box {
           background-color: #ebebeb;
           border-radius: 18px;
-          padding: 1.55rem 2.6rem;
+          padding: 1.3rem 2.8rem;
           color: #727272;
 
           font-weight: bold;
