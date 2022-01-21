@@ -178,7 +178,7 @@ export default {
 
     // add exam pack
     const handleAddExamPack =async () => {
-      alert('new exam pack added')
+      console.log('new exam pack added')
       if(isValid()) {
           try{
           await store.dispatch('examPackState/createExamPack', {...examPack.value})

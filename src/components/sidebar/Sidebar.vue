@@ -2,12 +2,34 @@
 import SidebarLink from './SidebarLink'
 import { ref } from 'vue'
 import { isActive, toggleActive } from './state'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default {
   props: {},
   components: { SidebarLink },
   setup() {
+    const store = useStore();
+    const router = useRouter();
+    
+    const handleLogout = async () => {
+      
+      
+      try {
+        const res = axios.get('https://www.exam.poc.ac/api/LogOut/',
+        {
+          headers: `Bearer ${localStorage.getItem('token')}`
+        })
+        localStorage.removeItem('token')
+        localStorage.removeItem('userId')
+        store.commit('adminState/initializeStore')
+        router.push('/logout')
+
+      } catch(err){
+        console.log(err)
+      }
+    }
   
-    return { toggleActive, isActive }
+    return { toggleActive, isActive, handleLogout }
   }
 }
 </script>
@@ -23,22 +45,23 @@ export default {
     
     <span>
       <h1>
-      <span class="crossBar__parent" v-if="isActive">
+      <!-- <span class="crossBar__parent" v-if="isActive">
         <img alt="Vue logo" class= "poc_logo2" src="@/assets/poc_logo_small.png" />
 
         <div class="crossBar" @click="toggleActive">
           <div class="bar1"></div>
           <div class="bar2"></div>
         </div>
+      </span> -->
+      <span class="bigSpan">
+        <img alt="Vue logo" class= "poc_logo" src="@/assets/poc_logo.svg" />
       </span>
-      <span class="bigSpan"><img alt="Vue logo" class= "poc_logo" src="@/assets/poc_logo.svg" /></span>
     </h1>
-
 
     <span>
       <SidebarLink to="/dashboard" icon="fas fa-home">Dashboard</SidebarLink>
       <SidebarLink to="/exam-pack" icon="fas fa-columns">Exam Pack</SidebarLink>
-      <SidebarLink to='/exam-management' icon="fas fa-user-circle">Exam Management</SidebarLink>
+      <SidebarLink to='/exam-management' icon="fas fa-university">Exam Management</SidebarLink>
       <SidebarLink to='/student-management' icon="fas fa-user-circle">Student Management</SidebarLink>
       <SidebarLink to="/reporting" icon="fas fa-chart-bar">Reporting</SidebarLink>
       <!-- <SidebarLink to="/edit-profile" icon="fas fa-cog">Edit Profile</SidebarLink> -->
@@ -67,7 +90,7 @@ export default {
     </span>
 
 
-    <span class="logout">
+    <span class="logout" @click="handleLogout">
       <SidebarLink to="/logout" icon="fas fa-sign-out-alt">Logout</SidebarLink>
     </span>
 
@@ -129,7 +152,7 @@ export default {
 }
 
 .logout {
-  margin-bottom:0.9rem;
+  margin-bottom:1.2rem;
   }
 .sidebar.active {
   left: 0px;
@@ -145,8 +168,8 @@ export default {
   position: relative;
   left: 28px;
   top: 40px;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
 
   @include maxMedia(768px) {
     display: flex;
@@ -171,8 +194,15 @@ export default {
 
 .bigSpan {
   display: block;
+  max-width: 130px;
+  img {
+    width: 100%;
+    height: 100%;
+
+  }
   @include maxMedia(768px) {
-    display: none;
+    max-width: 123px
+    // display: none;
   }
 }
 .crossBar {
@@ -182,6 +212,7 @@ export default {
   justify-content: space-around;
   flex-direction: column;
   cursor: pointer;
+  display: none;
 
   .bar1, .bar2 {
     height: 2px;
@@ -206,7 +237,7 @@ export default {
   }
 }
 .sidebar h1 {
-  height: 4em;
+  height: 3.5em;
   padding-top: 2.5rem;
 }
 .collapse-icon {

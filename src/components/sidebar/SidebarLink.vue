@@ -23,7 +23,7 @@ export default {
 </script>
 
 <template>
-    <router-link :to="to || ''" class="link" :class="{ active: activeLink && to}">
+    <router-link :to="to || ''" class="link" :class="{ active: activeLink && to}" @click="isActive && toggleActive()">
     <i class="icon" :class="icon" v-if="isNested === false" />
     <i class="iconNested" :class="[icon]" v-else />
     
@@ -62,7 +62,8 @@ span{
   user-select: none;
 
   margin: 0.1em 0;
-  padding: 0.4em;
+  padding: 0.55em 0.4rem;
+
   border-radius: 0.25em;
   height: 1.5em;
 
@@ -83,7 +84,7 @@ span{
   flex-shrink: 0;
   width: 25px;
   color: #00A9DC;
-  margin-right: 5px;
+  margin-right: 8px;
 }
 .link .iconNested {
   flex-shrink: 0;
