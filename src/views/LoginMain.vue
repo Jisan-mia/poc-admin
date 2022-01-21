@@ -5,10 +5,12 @@
     </h3>
 
     <form @submit.prevent="handleUserLogin">
-      <CustomPhoneInput v-model="userAuthInput.phoneNumber" placeholder="Enter your phone number" />
+      <CustomPhoneInput v-model="userAuthInput.phone_number" placeholder="Enter your phone number" />
       <CustomAuthInput v-model="userAuthInput.password" placeholder="Enter your password" type="text"/>
 
-      <CustomLoginRegisterBtn  buttonText="Login" />
+      <!-- <CustomLoginRegisterBtn  buttonText="Login" /> -->
+      <CustomLoginRegisterBtn  buttonText="Login" :isSpin="buttonLoading"/>
+
     </form>
   </div>
 </template>
@@ -20,30 +22,53 @@ import CustomPhoneInput from '@/components/Auth Components/CustomPhoneInput.vue'
 import CustomLoginRegisterBtn from '@/components/ui/CustomLoginRegisterBtn.vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { getNotification } from '../api/common'
 export default {
   components: { CustomAuthInput, CustomPhoneInput, CustomLoginRegisterBtn },
   name: 'LoginMain',
   setup() {
     const store = useStore();
-    const router = useRouter()
-    const user = computed(() => store.state.user)
-    console.log(user.value)
+    const router = useRouter();
+    const buttonLoading = ref(false)
 
-    console.log(user.value.password)
+    
     const userAuthInput = ref({
-      phoneNumber: '',
+      phone_number: '',
       password: ''
     })
 
+    const error = ref(null)
 
-    const handleUserLogin = () => {
-      console.log('handle user login func called')
-      router.push('/dashboard')
+
+    const handleUserLogin = async () => {
+      if(!/^(?:\+88|01)?(?:\d{11}|\d{13})$/.test(userAuthInput.value.phone_number)){
+        store.dispatch('notifications/add', getNotification('warning', 'Please enter a valid phone number'))
+        return;
+      } else if(userAuthInput.value.password.length < 5 ) {
+        store.dispatch('notifications/add', getNotification('warning', 'Password must be at least 5 character'))
+        return;
+      }
+      try {
+        buttonLoading.value = true
+        await store.dispatch('adminState/userLogin', {
+          ...userAuthInput.value
+        })
+        buttonLoading.value = false
+        router.push('/')
+      } catch(err) {
+        console.log(err.message);
+        setTimeout(() => {
+          buttonLoading.value = false
+        }, 1000);
+        error.value = err.message;
+      }
+      
     } 
 
     return {
       userAuthInput,
       handleUserLogin,
+      buttonLoading
     }
   }
 }

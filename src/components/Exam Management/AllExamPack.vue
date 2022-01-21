@@ -15,11 +15,10 @@
 </div>
 </template>
 <script>
-import { ref } from '@vue/reactivity'
-import getExamList from '../../api/examPackApi'
+import { computed, ref } from '@vue/reactivity'
 import ExamPackCard from '../../components/Exam Management/ExamPackCard.vue'
-import { useRoute, useRouter } from 'vue-router'
 import CustomAdminBtn from '../ui/CustomAdminBtn.vue'
+import { useStore } from 'vuex'
 
 export default {
   name: "AllExamPack",
@@ -31,7 +30,7 @@ export default {
     CustomAdminBtn
 },
   setup(props, ctx) {
-      const examPacks = ref([
+      const examPacksd = ref([
         {
           id: 1, 
           title: 'Elite Exam Mania',
@@ -90,28 +89,14 @@ export default {
           image: ''
         }
       ])
-    
-      const route = useRoute();
-      const router = useRouter();
+      const store = useStore();
+      const examPacks = computed(() => store.state.examPackState.examPacks);
 
       const onExamPackClick = (examPack) => {
         // console.log('clicked', examPack)
-        ctx.emit('examPackClick', examPack)
+        ctx.emit('examPackCardClick', examPack)
       }
-
-      const {examList, error, loadExamList} = getExamList();
-      const url = "http://www.exam.poc.ac/api/list_examPack"
-      function apiFetch(){
-          fetch(url)
-          .then(res => res.json())
-          .then(data => {
-              console.log(data)
-          })
-      }
-      // apiFetch();
-      // onMounted(() => {
-
-      // })
+      // examPacks.value.length = 2
 
       return {
         examPacks,
@@ -123,7 +108,8 @@ export default {
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/styles/config.scss';
 
 .container{
   display: flex;
@@ -138,12 +124,16 @@ export default {
 .pack_container{
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 300px));
   grid-template-rows: max-content;
   grid-auto-rows: max-content;
   grid-gap:2rem 1.2em;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
+  @include maxMedia(980px) {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    justify-content: center
+  }
 }
 .pack_container::after{
   content: "";
@@ -154,7 +144,7 @@ export default {
 .card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 0.8em;
 }

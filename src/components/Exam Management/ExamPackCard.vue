@@ -1,10 +1,10 @@
 <template>
  
     <div class="img__container" :class="[outline ? 'notOutlined' : 'outlined']">
-      <img src="/images/placeholderImg.svg" alt="">
+      <img :src="imageUrl(examPack.pack_image)" alt="Exam Pack Image">
     </div>
     <div class="text">
-      <h3 @click="$emit('examPackClick', examPack)"> {{examPack.title}} </h3> 
+      <h3 @click="$emit('examPackClick', examPack)"> {{examPack.ExamPack_name}} </h3> 
 
       <p>
         Batch {{examPack.batch}} 
@@ -13,22 +13,27 @@
 </template>
 
 <script>
+import { computed } from '@vue/reactivity';
 export default {
   name: "ExamPackCard",
   props: ['examPack', 'outline', 'isExam'],
   emits: ['examPackClick'],
   setup(props) {
-     const examPack = props.examPack
-    const titleToUrl = title => title.trim().toLowerCase().split(' ').join('-')
+    const examPack = props.examPack
+    const titleToUrl = title => title.trim().toLowerCase().split(' ').join('-');
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+
     return {
       examPack,
-      titleToUrl
+      titleToUrl,
+      imageUrl
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/config.scss';
 
   .outlined{
     border-radius: 23px;
@@ -43,9 +48,15 @@ export default {
     align-items: center;
     width: 100%;
     height: 180px;
+    @include maxMedia(768px) {
+      height: 155px;
+    }
   }
   .img__container img{
-    max-width: 77px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-position: center center;
   }
   .text{
     text-align: left;

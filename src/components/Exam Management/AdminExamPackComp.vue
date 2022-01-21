@@ -1,19 +1,23 @@
 <template>
   <div class="container">
     <div class="left">
-      <div class="img__container">
-        <img src="/images/placeholderImg.svg" alt="">
+      <div class="img__container" :class="{img__create: isAdminExamPackCreate && !previewImage}">
+        <img :src="previewImage ? previewImage : examPack.pack_image ? imageUrl(examPack.pack_image) : '/images/placeholderImg.svg'" alt="">
+        <span>
+          <ImgInputModel v-model="examPack.pack_image" @imagInput="handleIInput"/>
+        </span>
+
       </div>
     </div>
     <div class="right">
       <div class="right__inner">
-        <AdminCustomInput label="Exam Pack Name" v-model="examPack.title" placeholder="Enter Exam Pack Name"/>
-        <AdminCustomInput :isTextArea="true" :styles="{minHeight: '110px', resize: 'vertical'}" label="Detail" v-model="examPack.detail" placeholder="Enter Detail"/>
+        <AdminCustomInput label="Exam Pack Name" v-model="examPack.ExamPack_name" placeholder="Enter Exam Pack Name"/>
+        <AdminCustomInput :isTextArea="true" :styles="{minHeight: '110px', resize: 'vertical'}" label="Detail" v-model="examPack.details" placeholder="Enter Detail"/>
 
         <div class="select__cont">
           <div class="select">
-            <label>Label</label>
-            <select name="label" id="label" v-model="examPack.label" >
+            <label>Level</label>
+            <select name="level" id="level" v-model="examPack.level" >
               <option selected disabled value="">Select Label</option>
               <option value="JSC">JSC</option>
               <option value="SSC">SSC</option>
@@ -41,7 +45,7 @@
             </CustomAdminBtn>  
           </div>
           <div class="btn__wrapper">
-            <CustomAdminBtn type="danger" icon="fas fa-trash" @onClick="handleDeletePack">
+            <CustomAdminBtn type="danger" icon="fas fa-trash" @onClick="handleDeletePack(examPack.id)">
               Delete Exam Pack
             </CustomAdminBtn>  
           </div>
@@ -77,9 +81,12 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import AdminCustomInput from "./AdminCustomInput.vue"
 import CustomAdminBtn from '../ui/CustomAdminBtn.vue';
+import ImgInputModel from '../ui/ImgInputModel.vue';
+import { getNotification } from '../../api/common';
+import { useStore } from 'vuex';
 export default {
   name: "AdminExamPackComp",
   props: {
@@ -91,30 +98,111 @@ export default {
       type: Object
     }
   },
-  setup(props) {
+  setup(props, ctx) {
+    const store = useStore();
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+
     const examPack = ref({
-      title: '',
-      detail: '',
-      label: '',
+      ExamPack_name: '',
+      pack_image: '',
+      details: '',
       batch: '',
-      image: ''
+      level: ''
     })
 
     examPack.value = !props.isAdminExamPackCreate ? {...props.editExamPack} : {...examPack.value}
 
-    const handleEditPack = () => {
+    console.log(examPack.value)
+
+
+    
+
+    // validate field 
+    const isValid = () => {
+      const isValid = ref(true)
+      for(let key in examPack.value) {
+        if(examPack.value[key] == '') {
+          isValid.value = false
+          store.dispatch('notifications/add',getNotification('warning', `${key} is empty`))
+          break; 
+        }
+        else if (key == 'ExamPack_name' && examPack.value.ExamPack_name.length < 3) {
+          store.dispatch('notifications/add',getNotification('warning', 'Pack name must be at least 3 character'))
+          isValid.value = false
+          break;
+        } else if (key == 'details' && examPack.value.details.length < 5) {
+          store.dispatch('notifications/add',getNotification('warning', 'Pack details must be at least 5 character'))
+          isValid.value = false
+          break;
+        } else {
+          isValid.value = true;
+        }
+      }
+      return isValid.value;
+    }
+
+
+
+
+
+
+    //  edit an exam pack
+    const handleEditPack = async () => {
       console.log('edit pack')
+      if(isValid()) {
+        console.log('valid')
+
+        try{
+          await store.dispatch('examPackState/updateExamPack', {...examPack.value})
+          await store.dispatch('examPackState/loadExamPacks')
+
+          ctx.emit('backExamPack')
+        } catch(err) {
+          console.log(err)
+        }
+      }
     }
-    const handleDeletePack = () => {
+
+    // delete an exam pack
+    const handleDeletePack = async (packId) => {
       console.log('delete pack')
+      try{
+        await store.dispatch('examPackState/deleteExamPack', packId )
+        await store.dispatch('examPackState/loadExamPacks')
+
+        ctx.emit('backExamPack')
+      } catch(err) {
+        console.log(err)
+      }
     }
+
+    // add exam pack
+    const handleAddExamPack =async () => {
+      alert('new exam pack added')
+      if(isValid()) {
+          try{
+          await store.dispatch('examPackState/createExamPack', {...examPack.value})
+          await store.dispatch('examPackState/loadExamPacks')
+          ctx.emit('backExamPack')
+        } catch(err) {
+          console.log(err)
+        }
+      }
+    }
+
+    // create an exam
     const handleCreateExam = () => {
       console.log('create exam')
     }
 
 
-    const handleAddExamPack = () => {
-      alert('new exam pack added')
+
+
+    const previewImage = ref(null)
+
+    const handleIInput = (e) => {
+      console.log(e)
+      previewImage.value = e;
     }
 
     
@@ -123,10 +211,13 @@ export default {
       handleEditPack,
       handleDeletePack,
       handleCreateExam,
-      handleAddExamPack
+      handleAddExamPack,
+      imageUrl,
+      previewImage,
+      handleIInput
     };
   },
-  components: { AdminCustomInput, CustomAdminBtn }
+  components: { AdminCustomInput, CustomAdminBtn, ImgInputModel }
 }
 </script>
 
@@ -142,18 +233,51 @@ export default {
   .left {
     width: 100%;
     max-width: 450px;
+
     .img__container{
-      background: #CFCFCF;
+      position: relative;
+      // background: #CFCFCF;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
+      // height: 290px;
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background-position: center center;
+      }
+
+      span{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        top:0;
+        left: 0;
+        cursor: pointer;
+
+        input {
+          position: absolute;
+          /* top: 0; */
+          opacity: 0;
+          inset: 0;
+          width: 100%;
+          cursor: pointer;
+        }
+      }
+
+    }
+
+    .img__create {
+      background: #CFCFCF;
       height: 290px;
       img{
-        max-width: 90px;
+        max-width: 77px;
         width: 100%;
       }
+
     }
   }
   .right {

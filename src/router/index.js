@@ -16,11 +16,11 @@ const routes = [
         name: 'PageNotFound',
         component: () => import('@/components/ui/PageNotFound.vue')
     },
-    {
-        path: '/login',
-        name: 'Login',
-        component: lazyLoadLogin('Login'),
-    },
+    // {
+    //     path: '/login',
+    //     name: 'Login',
+    //     component: lazyLoadLogin('Login'),
+    // },
 
     {
         path: '/logout',

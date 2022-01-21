@@ -1,6 +1,6 @@
 <template>
   <span v-if="currentCompState == 'adminExamPack'">
-    <AllExamPack @handleAddExamPack="handleCreateExamPack" @examPackClick="onExamPackCardClick"/>
+    <AllExamPack @handleAddExamPack="handleCreateExamPack" @examPackCardClick="onExamPackCardClick"/>
   </span>
 
   <span v-else-if="currentCompState == 'isAdminExamPackCreate'">

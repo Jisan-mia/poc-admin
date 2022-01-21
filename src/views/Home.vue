@@ -1,27 +1,48 @@
 <template>
-  <div class="home">
-    loading..
-    <!-- <router-link :to='{name: "Login"}'>
+    <!-- <router-link :to='{name: "LoginRegister"}'>
       <h2>
-        Go to Login
+        Go to Login/register
       </h2>
     </router-link> -->
-  </div>
+
+      <Login v-if="!isAuthenticated"/>
+
 </template>
 
 <script>
+import { computed, ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { watchEffect } from '@vue/runtime-core';
+import Login from './Login.vue';
+import AdminDashboard from './Admin/AdminDashboard.vue';
 export default {
   name: "Home",
   setup() {
+    const store = useStore();
     const router = useRouter();
+    const isAuthenticated = computed(() => store.state.adminState.user.isAuthenticated);
+    console.log("homie", isAuthenticated)
+    
+   
 
-    router.push('/login')
+    watchEffect(async () => {
+      if(isAuthenticated.value) {
+        router.push('/dashboard')
+      } else {
+        localStorage.removeItem('token')
+        localStorage.removeItem('userId')
+        store.commit('userState/initializeStore')
+      }
+    })
+
+
 
     return {
-
-    }
-  }
+        isAuthenticated,
+    };
+  },
+  components: { AdminDashboard, Login }
 };
 </script>
 <style lang="scss" scoped>

@@ -1,0 +1,5 @@
+export const examPackMutationTypes = {
+  SET_EXAM_PACK: 'SET_EXAM_PACK',
+  SET_EXAM_LIST: 'SET_EXAM_LIST',
+  SET_EXAM_QUESTIONS: 'SET_EXAM_QUESTIONS'
+}

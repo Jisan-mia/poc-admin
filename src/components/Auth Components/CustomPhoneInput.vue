@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <span>+880</span>
+    <span>+88</span>
     <input min="0" type="number" :value="modelValue" @input="updateValue" :placeholder="placeholder">
   </div>
 </template>
@@ -9,7 +9,9 @@
 export default {  
   name: 'CustomPhoneInput',
   props: {
-    modelValue: Number,
+    modelValue: {
+      type: [Number, String]
+    },
     placeholder: String
   },
   setup(props, cxt) {
@@ -74,7 +76,7 @@ input[type=number] {
 
     &::placeholder {
       color: #002C51;
-      font-style: italic;
+      // font-style: italic;
       font-size: 0.9rem;
 
     }
