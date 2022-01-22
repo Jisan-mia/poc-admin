@@ -89,6 +89,10 @@ export default {
     </span>
     </span>
 
+    <!-- <span>
+      All rights reserved UFTL Engineers Team
+    </span> -->
+
 
     <span class="logout" @click="handleLogout">
       <SidebarLink to="/logout" icon="fas fa-sign-out-alt">Logout</SidebarLink>

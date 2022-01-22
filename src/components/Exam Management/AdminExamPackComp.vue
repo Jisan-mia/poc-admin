@@ -112,7 +112,7 @@ export default {
 
     examPack.value = !props.isAdminExamPackCreate ? {...props.editExamPack} : {...examPack.value}
 
-    console.log(examPack.value)
+    // console.log(examPack.value)
 
 
     

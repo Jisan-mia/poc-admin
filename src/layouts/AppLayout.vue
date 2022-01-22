@@ -34,6 +34,8 @@ export default {
       if(isAuthenticated.value) {
         try{
             await store.dispatch('examPackState/loadExamPacks');
+            await store.dispatch('examPackState/loadExamLists');
+            
             // await store.dispatch('examPackState/loadExamLists');
             // await store.dispatch('reportingState/loadStudentReporting');
             store.commit('setIsLoading', false)

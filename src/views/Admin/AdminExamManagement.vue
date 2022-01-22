@@ -28,11 +28,12 @@
 
 </template>
 <script>
-import { ref } from '@vue/reactivity'
+import { computed, ref } from '@vue/reactivity'
 import CustomAdminBtn from '../../components/ui/CustomAdminBtn.vue'
 import ExamCard from '../../components/Exam Management/ExamCard.vue'
 import AdminExamComp from '../../components/Exam Management/AdminExamComp.vue'
 import CreateAllExamQuestion from '@/components/Exam Management/Create Exam Questions/CreateAllExamQuestion.vue'
+import { useStore } from 'vuex'
 
 export default {
   name: "AdminExamManagement",
@@ -46,27 +47,27 @@ export default {
     CreateAllExamQuestion
 },
   setup() {
-    const upcomingExam = ref([
+    const store = useStore();
+    const upcomingExam = computed(() => store.state.examPackState.examLists)
+    const upcomingExamD = ref([
         {
           id: 1, 
           name: 'Chemistry 1st Paper',
           date: '10:30 AM | Sunday, 19/10/2021',
-detail: "This is exam detail. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam reiciendis mollitia et, officia alias dolorum quisquam minus dolor odio autem!",
-level: "HSC",
-batch: "2021",
-examPack: "elite exam pack3",
-totalMark: 20,
-questionMark: 1,
-passMark: 10,
-amountPerQuestion: 0.5,
-randomization: true,
-sorting: false,
-negativeMarking: false,
-startTime: '',
-endTime: "",
-totalTime: "40",
-
-
+          detail: "This is exam detail. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam reiciendis mollitia et, officia alias dolorum quisquam minus dolor odio autem!",
+          level: "HSC",
+          batch: "2021",
+          examPack: "elite exam pack3",
+          totalMark: 20,
+          questionMark: 1,
+          passMark: 10,
+          amountPerQuestion: 0.5,
+          randomization: true,
+          sorting: false,
+          negativeMarking: false,
+          startTime: '',
+          endTime: "",
+          totalTime: "40",
         },{
           id: 2, 
           name: 'Physics 1st Paper',
@@ -126,6 +127,7 @@ totalTime: "40",
 
         },
       ])
+
      
     const currentCompState = ref('examManagement') // examManagement | isExamManageEdit | isExamManageCreate | questionEditor
     const handleCreateExam = () => {
@@ -164,8 +166,8 @@ totalTime: "40",
 </script>
 
 
-<style scoped >
-
+<style scoped lang="scss" >
+@import '@/styles/config.scss';
 .container{
   display: flex;
   flex-direction: column;
@@ -184,15 +186,20 @@ totalTime: "40",
   margin-top: 0.8rem;
 }
 
+
 .pack_container{
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 300px));
   grid-template-rows: max-content;
   grid-auto-rows: max-content;
   grid-gap:2rem 1.2em;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
+  @include maxMedia(980px) {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    justify-content: center
+  }
 }
 .pack_container::after{
   content: "";
@@ -203,11 +210,10 @@ totalTime: "40",
 .card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 0.8em;
 }
-
 .primary-btn{
   border: none;
   outline: none;

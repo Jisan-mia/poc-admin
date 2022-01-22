@@ -91,7 +91,7 @@ span{
   width: 25px;
   color: #818181;
 
-  margin-right: 5px;
+  margin-right: 6px;
 }
 .link .nest1 {
   color: #00A9DC !important;

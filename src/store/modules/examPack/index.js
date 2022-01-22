@@ -25,6 +25,8 @@ const mutations = {
 }
 
 const actions = {
+  // exam pack related
+  
   async loadExamPacks(context) {
     const res = await examPackApi.getExamPackList();
     //console.log(res)
@@ -98,33 +100,16 @@ const actions = {
     }
   },
 
-
+  // exams related
 
   async loadExamLists(context) {
     const res = await examPackApi.getExamLists();
-    const resReporting = await reportingApi.getStudentReporting();
-    
     
     const data = await res.data;
-    const reportingData = await resReporting.data
-    // console.log(reportingData)
 
 
-    if(data && reportingData) {
-      const userId = context.rootState.userState.user.userId;
-
-      // let hasExamAlreadyGiven = reportingData.find(report => {
-      //   if(data.findIndex(exam => exam.id == report.exam_name) !== -1) {
-      //     return report.student == userId
-      //   }
-      // });
-
-      // hasExamAlreadyGiven = hasExamAlreadyGiven
-
-      // console.log(userId, reportingData, data)
-
+    if(data) {
       const mainExam = data.map(exam => {
-        //console.log(exam)
         if(getDateDiff(exam.Exam_end_date, exam.Exam_end_time)) {
           return {
             ...exam,
@@ -135,44 +120,88 @@ const actions = {
             ...exam,
             isNotYetStarted: true
           }
-        } 
-        // else if(hasExamAlreadyGiven) {
-        //   return {
-        //     ...exam,
-        //     hasExamAlreadyGiven: true
-        //   }
-        else {
-          let hasExamAlreadyGiven = reportingData.find(report => {
-            if(exam.id == report.exam_name) {
-              return report.student == userId
-            }
-          })
-          if(hasExamAlreadyGiven) {
-            return {
-              ...exam,
-              hasExamAlreadyGiven: true
-            }
-          }
-
         } return exam
       })
       //console.log(mainExam)
-
-
-
 
       context.commit(examPackMutationTypes.SET_EXAM_LIST, mainExam)
     } else {
       const notification = {
         type: 'error',
-        message: 'Error getting student exam lists'
+        message: 'Error getting exam lists'
       }
 
       context.dispatch('notifications/add', notification , {root: true})
       
-      throw new Error('could not exam lists')
+      throw new Error('could not get exam lists')
     }
   },
+
+  async createAnExam(context, exam) {
+    const res = await examPackApi.createExam(exam);
+    const data = await res.data;
+
+    if(data) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Error creating examPack'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})    
+    }
+    
+  },
+
+  async editAnExam (context, exam) {
+    const mainExam = {...exam}
+    if(!mainExam.cover_photo || typeof mainExam.cover_photo == 'string') {
+      // console.log(mainExam.pack_image)
+      delete mainExam.cover_photo
+    }
+    if(mainExam.isExpired) {
+      delete mainExam.isExpired
+    } else if(mainExam.isNotYetStarted) {
+      delete mainExam.isNotYetStarted
+    }
+    const res = await examPackApi.editExam(mainExam)
+    console.log(res)
+    const payload = await res.data;
+
+    if(payload) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Updated'} , {root: true})
+    }else {
+      const notification = {
+        type: 'error',
+        message: 'Error updating exam'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})
+    }
+  },
+
+  async deleteAnExam(context, examId) {
+    const res = await examPackApi.deleteExam(examId);
+    const resStatus = await res.status;
+
+    if(resStatus == 202) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Error deleting exam'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})    
+    }
+  },
+
+
+
+
+
+
 
   async loadExamQuestions(context, id) {
     const examLists = context.state.examLists;

@@ -1,20 +1,33 @@
 <template>
   <div class="examContainer">
     <div class="left">
-      <div class="img__container">
-        <img src="/images/placeholderImg.svg" alt="">
+
+      <div class="img__container" :class="{img__create: isExamManageCreate && !previewImage}">
+        <img :src="previewImage ? previewImage : examInfo.cover_photo ? imageUrl(examInfo.cover_photo) : '/images/placeholderImg.svg'" alt="">
+        <span>
+          <ImgInputModel v-model="examInfo.cover_photo" @imagInput="handleIInput"/>
+        </span>
       </div>
-      <AdminCustomInput v-model="examInfo.name" placeholder="Enter Exam Name"/>
-      <AdminCustomInput :isTextArea="true" :styles="{minHeight: '110px', resize: 'vertical'}" v-model="examInfo.detail" placeholder="Enter Exam Detail"/>
+
+      <AdminCustomInput v-model="examInfo.Exam_name" placeholder="Enter Exam Name"/>
+      <AdminCustomInput :isTextArea="true" :styles="{minHeight: '110px', resize: 'vertical'}" v-model="examInfo.details" placeholder="Enter Exam Detail"/>
       
       <div class="time">
-          <label for="startTime"  class="time__label">
-              <input type="datetime-local" value="2000-01-01T00:00:00" name="startTime" id="startTime" placeholder="Select Date & time">  
+          <label for="Exam_start_time"  class="time__label">
+             <input v-model="examInfo.Exam_start_time" type="time" id="Exam_start_time" name="Exam_start_time" required>
+          </label>
+
+          <label for="Exam_start_date"  class="time__label">
+             <input v-model="examInfo.Exam_start_date" type="date" id="Exam_start_date" name="Exam_start_date" required>
           </label>
           
 
-          <label for="endTime" class="time__label">
-            <input type="datetime-local" name="endTime" id="endTime" placeholder="Select Date & time"> 
+          <label for="Exam_end_time"  class="time__label">
+             <input v-model="examInfo.Exam_end_time" type="time" id="Exam_end_time" name="Exam_end_time" required>
+          </label>
+
+          <label for="Exam_end_date"  class="time__label">
+             <input :min="examInfo.Exam_start_date" v-model="examInfo.Exam_end_date" type="date" id="Exam_end_date" name="Exam_end_date" required>
           </label>
         
       </div>
@@ -38,7 +51,7 @@
             
             <div class="select">
               <label>Batch</label>
-                <select name="batch" id="batch" v-model="examInfo.batch">
+              <select name="batch" id="batch" v-model="examInfo.batch">
                 <option selected disabled value="">Select Batch</option>
                 <option value="2023">2023</option>
                 <option value="2022">2022</option>
@@ -48,11 +61,12 @@
 
             <div class="select">
               <label>Exam Pack</label>
-                <select name="examPack" id="examPack" v-model="examInfo.examPack" >
+              <select name="examInfo" id="examInfo" v-model="examInfo.exam_pack">
                 <option selected disabled value="">Select Exam Pack</option>
-                <option value="elite exam pack1">elite exam pack</option>
-                <option value="elite exam pack2">elite exam pack2</option>
-                <option value="elite exam pack3">elite exam pack3</option>
+                <option v-for="pack in examPacks" :key="pack.id" :value="pack.id">
+                  {{pack.ExamPack_name}}
+                </option>
+               
               </select>
             </div>
           </div>
@@ -61,43 +75,49 @@
         <div class="marking">
           <h3>Marking</h3>
           <div class="input__cont">
-            <AdminCustomInput label="Total" v-model="examInfo.totalMark" placeholder="Enter Total Mark"/>
-            <AdminCustomInput label="Per Question Mark" v-model="examInfo.questionMark" placeholder="Per Question Mark"/>
-            <AdminCustomInput label="Pass Mark" v-model="examInfo.passMark" placeholder="Enter Pass Mark"/>
+            <AdminCustomInput label="Total" v-model="examInfo.total_mark" placeholder="Enter Total Mark" type="number"/>
+            <AdminCustomInput label="Per Question Mark" v-model="examInfo.mark_per_question" placeholder="Per Question Mark" type="number"/>
+            <AdminCustomInput label="Pass Mark" v-model="examInfo.pass_mark" placeholder="Enter Pass Mark" type="number"/>
           </div>
         </div>
 
 
         <div class="switches">
-          <h3>Randomization</h3>
+          <h3>Randomization : </h3>
           <div class="switch">
-            <ToggleSwitch v-model="examInfo.randomization" />
+            <ToggleSwitch v-model="examInfo.isRandomized" />
           </div>
         </div>
 
         <div class="switches">
-          <h3>Sorting</h3>
+          <h3>Sorting : </h3>
           <div class="switch">
-            <ToggleSwitch v-model="examInfo.sorting" />
+            <ToggleSwitch v-model="examInfo.isSorted" />
+          </div>
+        </div>
+
+        <div class="switches ngMark1">
+          <h3>Negative Marketing : </h3>
+          <div class="switch ngMark">
+            <ToggleSwitch v-model="examInfo.isNegativeMarking" />
+            <div class="negativeMark" v-if="examInfo.isNegativeMarking">
+              <p>Amount per mistake</p>
+              <AdminCustomInput 
+                :style="{maxHeight: '35px', maxWidth: '80px', textAlign: 'center'}" 
+                v-model="examInfo.amount_per_mistake" type="number"/>
+            </div>
           </div>
         </div>
 
         <div class="switches">
-          <h3>Negative Marketing</h3>
-          <div class="switch">
-            <ToggleSwitch v-model="examInfo.negativeMarking" />
-          </div>
-        </div>
-
-        <div class="switches">
-          <h3>Exam Total Time(Min)</h3>
+          <h3>Exam Total Time(Min) : </h3>
           <div class="totalTime">
-            30
+            <AdminCustomInput 
+              :style="{maxHeight: '42px', textAlign: 'center'}" 
+              v-model="examInfo.exam_total_time" type="number"/>
           </div>
         </div>
 
-
-       
 
         <div class="btn__cont" v-if="!isExamManageCreate">
           <div class="btn__wrapper">
@@ -111,7 +131,7 @@
             </CustomAdminBtn>  
           </div>
           <div class="btn__wrapper">
-            <CustomAdminBtn type="info" icon="fas fa-trash" @onClick="handleDeleteExam">
+            <CustomAdminBtn type="info" icon="fas fa-trash" @onClick="handleDeleteExam(examInfo.id)">
               Delete Exam
             </CustomAdminBtn>  
           </div>
@@ -147,11 +167,14 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import AdminCustomInput from "./AdminCustomInput.vue"
 import CustomAdminBtn from '../ui/CustomAdminBtn.vue';
 import ToggleSwitch from '../ui/ToggleSwitch.vue';
 import { watchEffect } from '@vue/runtime-core';
+import ImgInputModel from '../ui/ImgInputModel.vue';
+import { useStore } from 'vuex';
+import { getNotification } from '../../api/common';
 export default {
   name: "AdminExamComp",
   props: {
@@ -164,58 +187,149 @@ export default {
     }
   },
   setup(props, context) {
+    const store = useStore();
+    const examPacks = computed(() => store.state.examPackState.examPacks);
+    
     const examInfo = ref({
-      name: '',
-      date: '',
-      detail: '',
-      level: "",
-      batch: "",
-      examPack: "",
-      totalMark: '',
-      questionMark: '',
-      passMark: '',
-      amountPerQuestion: '',
-      randomization: false,
-      sorting: true,
-      negativeMarking: false,
-      startTime: '',
-      endTime: "",
-      totalTime: "",
+      cover_photo: '',
+      Exam_name: '', // (Char filed data any kind of)
+      details: '',
+      Exam_start_time: '',
+      Exam_start_date: '',
+      Exam_end_time: '',
+      Exam_end_date: '',
+      level: '',
+      batch: '',
+      exam_pack: '',  //in this section we have to be need examInfo ID
+      total_mark: '',
+      mark_per_question: '',
+      pass_mark: '',
+      exam_total_time: '',
+
+      isRandomized: false,
+      isSorted: false,
+      isNegativeMarking: false,
+      amount_per_mistake: '',
     })
 
     examInfo.value = !props.isExamManageCreate ? {...props.editExam} : {...examInfo.value}
 
-    const handleEditExam = () => {
-      console.log('edit exam')
+
+    // validate field 
+    const isValid = () => {
+      const isValid = ref(true)
+      for(let key in examInfo.value) {
+        if(examInfo.value[key] == '') {
+          if(key == 'amount_per_mistake' || key == 'isNegativeMarking' || key == 'isRandomized' || key == 'isSorted') {
+            continue;
+          }
+          isValid.value = false
+          store.dispatch('notifications/add', getNotification('warning', `${key} is empty`))
+          break; 
+        }
+        else if (key == 'Exam_name' && examInfo.value.Exam_name.length < 3) {
+          store.dispatch('notifications/add',getNotification('warning', 'Exam name must be at least 3 character'))
+          isValid.value = false
+          break;
+        } else if (key == 'details' && examInfo.value.details.length < 5) {
+          store.dispatch('notifications/add',getNotification('warning', 'Exam details must be at least 5 character'))
+          isValid.value = false
+          break;
+        } else if (key == 'isNegativeMarking' && examInfo.value.isNegativeMarking && !examInfo.value.amount_per_mistake) {
+          store.dispatch('notifications/add',getNotification('warning', 'Please add amount per mistake'))
+          isValid.value = false
+          break;
+        } else {
+          isValid.value = true;
+        }
+      }
+      return isValid.value;
     }
+
+
+    //  edit an exam
+    const handleEditExam =  async () => {
+      console.log('edit exam')
+      if(isValid()) {
+
+        try {
+          await store.dispatch('examPackState/editAnExam', {...examInfo.value});
+          await store.dispatch('examPackState/loadExamLists');
+          
+          context.emit('backExam')
+          
+
+        } catch(err) {
+          console.log(err)
+        }
+
+      }
+    }
+
+    // to question editor
     const handleQuestionEditor = () => {
       console.log('question editor')
       context.emit('onQuestionEditor')
     }
-    const handleCreateExam = () => {
+
+    // create an exam
+    const handleCreateExam = async () => {
       console.log('create exam')
+      
+      if(isValid()) {
+          try{
+          await store.dispatch('examPackState/createAnExam', {...examInfo.value})
+          await store.dispatch('examPackState/loadExamLists')
+          
+          context.emit('backExam')
+
+        } catch(err) {
+          console.log(err)
+        }
+      }
     }
 
-    const handleDeleteExam = () => {
+    // delete an exam
+    const handleDeleteExam = async (examId) => {
       console.log('delete exam')
+      try{
+        await store.dispatch('examPackState/deleteAnExam', examId )
+        await store.dispatch('examPackState/loadExamLists')
+
+        context.emit('backExam')
+
+      } catch(err) {
+        console.log(err)
+      }
     }
 
     watchEffect(() => {
-      console.log(examInfo.value.randomization)
-      console.log(examInfo.value.sorting)
-      console.log(examInfo.value.negativeMarking)
+      // 
     })
 
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+
+
+    const previewImage = ref(null)
+
+    const handleIInput = (e) => {
+      console.log(e)
+      previewImage.value = e;
+    }
     
     return {
       examInfo,
       handleEditExam,
       handleQuestionEditor,
       handleCreateExam,
-      handleDeleteExam
+      handleDeleteExam,
+      previewImage,
+      handleIInput,
+      imageUrl,
+      examPacks
     };
   },
-  components: { AdminCustomInput, CustomAdminBtn, ToggleSwitch }
+  components: { AdminCustomInput, CustomAdminBtn, ToggleSwitch, ImgInputModel }
 }
 </script>
 
@@ -241,26 +355,61 @@ export default {
     align-items: flex-start;
     gap: 1.5rem;
     width: 100%;
+    
     .img__container{
-      background: #CFCFCF;
+      position: relative;
+      // background: #CFCFCF;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
-      height: 200px;
+      // height: 290px;
       img{
-        max-width: 90px;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background-position: center center;
+      }
+
+      span{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        top:0;
+        left: 0;
+        cursor: pointer;
+
+        input {
+          position: absolute;
+          /* top: 0; */
+          opacity: 0;
+          inset: 0;
+          width: 100%;
+          cursor: pointer;
+        }
+      }
+
+    }
+
+    .img__create {
+      background: #CFCFCF;
+      height: 290px;
+      img{
+        max-width: 77px;
         width: 100%;
       }
+
     }
 
     .time {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
       width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 200px);
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+
       &__label {
         position: relative;
       }
@@ -311,7 +460,29 @@ export default {
       .switch {
         display: inline-flex;
       }
+      .switch.ngMark {
+        place-items: center;
+        .negativeMark {
+          display: flex;
+          flex-direction: column;
+          gap: 0.18rem;
+          margin-left: 1.8rem;
 
+          p{
+            font-weight: 600;
+            font-size: 0.8rem;
+          }
+        }
+      }
+      
+
+      .totalTime {
+        max-width: 80px;
+      }
+
+    }
+    .ngMark1 {
+      min-height: 52.88px;
     }
 
     .common {

@@ -87,7 +87,7 @@ export default {
 
     &::placeholder {
       color: #002C51;
-      font-style: italic;
+      // font-style: italic;
       font-size: 0.9rem;
     }
   }
