@@ -53,17 +53,27 @@
         </div>
 
         <div class="item4">
-          <h3>Your Performance</h3>
-
-          <div class="infos">
-            <p>Score: 25/30</p>
-            <p>Timestamp: 10:20 pm</p>
-            <p>Negative Marketing: -5</p>
+          <div class="switches">
+            <h3>Randomization : </h3>
+            <div class="switch">
+              <ToggleSwitch v-model="isRand" :disabled="true"/>
+            </div>
           </div>
 
-          <button class="view__btn">
-            View Answer Sheet
-          </button>
+          <div class="switches ngMark1">
+            <h3>Negative Marketing : </h3>
+            <div class="switch ngMark">
+              <ToggleSwitch v-model="isNegative" :disabled="true" />
+            </div>
+          </div>
+          <div class="negativeMark" v-if="isNegative">
+              <p>Amount per mistake</p>
+              <AdminCustomInput 
+                :style="{maxHeight: '35px', maxWidth: '60px', textAlign: 'center', padding: '8px 0px'}" 
+                v-model="amount_per_mistake" type="number"
+                :disabled="true"
+              />
+          </div>
         </div>
 
       </div>
@@ -164,196 +174,216 @@
 <script>
 import { computed, onMounted, ref } from '@vue/runtime-core';
 import { useRoute } from 'vue-router'
+import ToggleSwitch from '../ui/ToggleSwitch.vue';
+import AdminCustomInput from './AdminCustomInput.vue';
 export default {
-  name: 'SpecificExamReportComp',
-  setup() {
-    const route = useRoute();
-    const specificExamReports = ref([
-      {
-        scores: {own: 25, max: 30},
-        rank: 1,
-        student_image: '',  
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-
-      },{
-        scores: {own: 25, max: 30},
-        rank: 2,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-
-      },{
-        scores: {own: 25, max: 30},
-        rank: 3,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3
-        
-      },{
-        scores: {own: 25, max: 30},
-        rank: 4,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 5,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-
-      },{
-        scores: {own: 25, max: 30},
-        rank: 6,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-
-      },{
-        scores: {own: 25, max: 30},
-        rank: 7,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 8,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 9,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 10,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 11,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 12,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 13,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 14,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 15,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-        
-      },{
-        scores: {own: 25, max: 30},
-        rank: 16,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 17,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 18,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      },{
-        scores: {own: 25, max: 30},
-        rank: 19,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        time_stamp: "10:20:30 Pm",
-        negative_mark: -3,
-      }
-    ])
-    onMounted(() => {
-    })
-    return {
-      specificExamReports
-    }
-  }
+    name: "SpecificExamReportComp",
+    setup() {
+        const route = useRoute();
+        const isRand = ref(true);
+        const isNegative = ref(true);
+        const amount_per_mistake = ref(0.5);
+        const specificExamReports = ref([
+            {
+                scores: { own: 25, max: 30 },
+                rank: 1,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 2,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 3,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 4,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 5,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 6,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 7,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 8,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 9,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 10,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 11,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 12,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 13,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 14,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 15,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 16,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 17,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 18,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            },
+            {
+                scores: { own: 25, max: 30 },
+                rank: 19,
+                student_image: "",
+                student_name: "Md. Ahmed",
+                institute: "Chittagong College, Chittagong",
+                board: "Dhaka",
+                time_stamp: "10:20:30 Pm",
+                negative_mark: -3,
+            }
+        ]);
+        "";
+        return {
+            specificExamReports,
+            isRand,
+            isNegative,
+            amount_per_mistake
+        };
+    },
+    components: { ToggleSwitch, AdminCustomInput }
 }
 </script>
 
@@ -621,7 +651,7 @@ table {
         font-size: 16px;
         line-height: 17px;
         letter-spacing: -0.011em;
-        color: #000000;
+        color: #00A9DC;
       }
       div.infos p{
         font-size: 13px;
@@ -635,13 +665,48 @@ table {
       .view__btn {
         border: none;
         outline: none;
-        background: #FF6F00;
+        background: #00A9DC;
         color: #fff;
         padding: 7px 10px;
         cursor: pointer;
         font-size: 13px;
         font-weight: 14px;
       }
+
+      .negativeMark {
+        display: flex;
+        gap: 0.18rem;
+        place-items: center;
+
+        p{
+          font-weight: 600;
+          font-size: 0.8rem;
+          margin-right: 0.2rem;
+        }
+      }
+      .switches {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      align-items: center;
+
+      .switch {
+        display: inline-flex;
+      }
+      .switch.ngMark {
+        place-items: center;
+        
+      }
+      
+
+      .totalTime {
+        max-width: 80px;
+      }
+
+    }
+    .ngMark1 {
+      min-height: 52.88px;
+    }
     }
     
 

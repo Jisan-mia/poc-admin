@@ -22,7 +22,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const isAuthenticated = computed(() => store.state.adminState.user.isAuthenticated);
-    console.log("homie", isAuthenticated)
+    // console.log("homie", isAuthenticated)
     
    
 

@@ -35,6 +35,8 @@ export default {
         try{
             await store.dispatch('examPackState/loadExamPacks');
             await store.dispatch('examPackState/loadExamLists');
+            await store.dispatch('adminState/loadStudentList');
+
             
             // await store.dispatch('examPackState/loadExamLists');
             // await store.dispatch('reportingState/loadStudentReporting');

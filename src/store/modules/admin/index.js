@@ -11,7 +11,8 @@ const state = {
     name:"",
     token: '',
     isAuthenticated: false
-  }
+  },
+  studentList: [],
 }
 
 const mutations = {
@@ -41,6 +42,9 @@ const mutations = {
     state.profile = profile;
     //console.log(state.profile)
   },
+  setAllStudent(state, studentLists) {
+    state.studentList = studentLists
+  }
 }
 
 const actions = {
@@ -68,6 +72,30 @@ const actions = {
 
       context.dispatch('notifications/add', notification , {root: true})
       throw new Error('could not login user')
+    }
+  },
+
+  async loadStudentList(context) {
+    const res = await adminApi.getAllStudentList();
+    // console.log(res)
+
+    const data = await res.data
+    if(data) {
+      context.commit('setAllStudent', data)
+
+      // const userId = context.state.user.userId
+      // console.log(userId)
+      // const profile = data.find(profile => profile.user == userId)
+      // context.commit('setProfile', profile)
+
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Error getting student lists'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})
+      throw new Error('Error getting student lists')
     }
   },
   

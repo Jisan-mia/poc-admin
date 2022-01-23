@@ -1,16 +1,27 @@
 <template>
   <header class="header">
     <div class="header__input">
-      <input type="number" placeholder="Search With Phone Number" name="" id="">
-      <input type="text" name="" id="" placeholder="Search With Name">
-      <select name="" id="" placeholder="Filter with Board">
-        <option selected disabled value="">Filter With Board</option>
-        <option  value="dhaka">Dhaka</option>
+      <input  type="number" placeholder="Search With Phone Number" name="" id="">
+      <input v-model="phoneSearch" type="text" name="" id="" placeholder="Search With Name">
+      
+      <select name="" id="" placeholder="Filter with Board" v-model="boardSelected">
+        <option selected disabled value="">Filter by Board</option>
+        <option value="all">All Board</option>
+        <option value="dhaka">Dhaka</option>
         <option value="chittagong">Chittagong</option>
         <option value="sylhet">Sylhet</option>
+        <option value="comilla">Comilla</option>
+        <option value="mymensingh">Mymensingh</option>
+        <option value="rajshahi">Rajshahi</option>
+        <option value="rangpur">Rangpur</option>
+        <option value="barisal">Barisal</option>
       </select>
+
     </div>
   </header>
+  <div class="table__main">
+
+  
   <table>
     <tbody>
       <tr>
@@ -41,18 +52,18 @@
         <td> 
           <router-link :to="{name: 'SpecificStudent', params: {studentId: student.id}}">
             <span class="phone">
-              {{student.phoneNumber}}
+              01301822644
             </span>
           </router-link>
         </td>
         <td>
           <div class="student__info">
             <div class="img__container">
-              <img src="/images/profile1.jpeg" alt="">
+              <img :src="student.Profile_image ? imageUrl(student.Profile_image) : '/images/placeholderImg2.svg'" alt="">
             </div>
             <div class="info">
-              <h4> {{student.student_name}} </h4>
-              <p> {{student.institute}} </p>
+              <h4> {{student.name}} </h4>
+              <p> {{student.institution}} </p>
             </div>
           </div>
         </td>
@@ -64,205 +75,67 @@
 
         <td>
           <span>
-            {{student.batch}}
+            {{student.level}} {{student.batch}}
           </span>
         </td>
       </tr>
     </tbody>
   </table>
+
+  </div>
 </template>
 
 <script>
-import { computed, onMounted, ref } from '@vue/runtime-core';
+import { computed, ref } from '@vue/runtime-core';
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex';
 export default {
   name: 'AdminStudentManagement',
   setup() {
     const route = useRoute();
-    const allStudentList = ref([
-      {
-        phoneNumber: '01201822947',
-        id: 25381,
-        student_image: '',  
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
+    const store = useStore();
+    const boardSelected = ref('')
+    const phoneSearch =ref('')
+    const allStudentListD = computed(() => store.state.adminState.studentList);
+    console.log(allStudentListD.value)
 
-      },{
-        phoneNumber: '01201822947',
-        id: 2,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
 
-      },{
-        phoneNumber: '01201822947',
-        id: 3,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020"
-        
-      },{
-        phoneNumber: '01201822947',
-        id: 4,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 5,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
 
-      },{
-        phoneNumber: '01201822947',
-        id: 6,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
+    const allStudentList = computed(() => {
+      if(phoneSearch.value || boardSelected.value) {
+        let allStudentMain = ref(allStudentListD.value)
+        // console.log(allStudentMain.value)
+        if(phoneSearch.value) {
+           allStudentMain.value = allStudentMain.value.filter(student => {
+            return phoneSearch.value.toLowerCase().split(' ').every(v => student.name.toLowerCase().includes(v)) 
+          })
+        } 
+        if(boardSelected.value) {
+            allStudentMain.value = allStudentMain.value.filter(student => {
+              if(boardSelected.value == 'all') return student
+              return student.board.toLowerCase().includes(boardSelected.value.toLowerCase())
+            })
+        }
+        return allStudentMain.value
 
-      },{
-        phoneNumber: '01201822947',
-        id: 7,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 8,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 9,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 10,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 11,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 12,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 13,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 14,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 15,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-        
-      },{
-        phoneNumber: '01201822947',
-        id: 16,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 17,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 18,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
-      },{
-        phoneNumber: '01201822947',
-        id: 19,
-        student_image: '',
-        student_name: "Md. Ahmed",
-        institute: "Chittagong College, Chittagong",
-        board: "Dhaka",
-        
-        batch: "HSC 2020",
+      } else {
+        return allStudentListD.value
       }
-    ])
-    onMounted(() => {
     })
+
+
+
+
+
+
+    
+
     return {
-      allStudentList
+      allStudentList,
+      imageUrl,
+      boardSelected,
+      phoneSearch
     }
   }
 }
@@ -270,6 +143,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/config.scss';
+
+.table__main{
+  width: 100%;
+  margin-bottom: 2rem;
+  @include maxMedia(768px) {
+    overflow-x: scroll;
+  }
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -278,9 +160,11 @@ table {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr 1fr;
     // grid-template-columns: repeat(6, 1fr);
-    // @include maxMedia(968px) {
-    //   display: inherit;
-    // }
+    @include maxMedia(768px) {
+      // grid-template-columns: repeat(6, 200px);
+      grid-template-columns: 200px 350px 180px 100px;
+    }
+
 
     &:first-child{
       font-weight: 600;
@@ -335,8 +219,10 @@ table {
     gap: 0.9rem;
     .img__container{
       height: 42px;
+      min-width: 42px;
       width: 42px;
       border-radius: 50%;
+      background-color: #cdcdcd;
       img{
         width:100%;
         height: 100%;
@@ -386,9 +272,13 @@ table {
   align-content: center;
   gap: 0.85rem;
   margin-bottom: 1rem;
+  @include maxMedia(768px) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))
+  }
+
 
   input, select {
-    border: 1px solid #FF6F00;
+    border: 1px solid #00a9dc;
     box-sizing: border-box;
     border-radius: 8px;
     font-weight: 500;
@@ -397,6 +287,7 @@ table {
     outline: none;
     padding: 0.7rem 1rem;
     text-align: center;
+    width: 100%;
     &::placeholder{
       color: #696969;
     }

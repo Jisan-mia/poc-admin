@@ -25,7 +25,7 @@ export default {
   emits: ['examCardClick'],
   setup(props) {
     const currentExam = props.exam;
-    console.log(currentExam, currentExam.Exam_start_date)
+    // console.log(currentExam, currentExam.Exam_start_date)
     
 
 

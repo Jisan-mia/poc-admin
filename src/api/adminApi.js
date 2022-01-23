@@ -26,12 +26,12 @@ const getAllStudentList = async () => {
     const res = await axios.get(`https://www.exam.poc.ac/api/student_info/`)
     //console.log(res);
     if(res.data.code != 200) {
-      throw Error('Error logging user')
+      throw Error('Error getting student list')
     }
     return res.data;
   } catch(error) {
     console.log(error)
-    return "Couldn't login user"
+    return "Couldn't get student lsit"
   }
 }
 
