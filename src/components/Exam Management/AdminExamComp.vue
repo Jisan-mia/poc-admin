@@ -201,15 +201,15 @@ export default {
       level: '',
       batch: '',
       exam_pack: '',  //in this section we have to be need examInfo ID
-      total_mark: '',
-      mark_per_question: '',
-      pass_mark: '',
+      total_mark: 0,
+      mark_per_question: 0,
+      pass_mark: 0,
       exam_total_time: '',
 
       isRandomized: false,
       isSorted: false,
       isNegativeMarking: false,
-      amount_per_mistake: '',
+      amount_per_mistake: 0,
     })
 
     examInfo.value = !props.isExamManageCreate ? {...props.editExam} : {...examInfo.value}

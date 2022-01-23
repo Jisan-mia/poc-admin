@@ -18,36 +18,42 @@ const mutations = {
 }
 
 const actions = {
-  async loadStudentReporting(context) {
-    const res = await reportingApi.getStudentReporting();
+  async loadAdminReporting(context) {
+    const res = await reportingApi.getAdminReporting();
     // console.log(res)
     const data = await res.data;
 
     if(data) {
-      //console.log(context.rootState.examPackState.examLists, data)
+      console.log(context.rootState.examPackState.examLists, data)
 
-      const reportings = data;
+      const reportings = [...data];
       const examLists = context.rootState.examPackState.examLists;
       if(context.rootState.examPackState.examLists.length !== 0 && reportings.length !== 0) {
-        const reportingExamIds = reportings.map(r => r.exam_name);
+        const reportingExamIdsD = reportings.map(r => r.exam_name);
+        // without exam name duplicates
+        const reportingExamIds = [...new Set(reportingExamIdsD)]
         // console.log(reportingExamIds)
 
-        const examReports = examLists.map(exam => {
+        const exams = examLists.map(exam => {
           if(reportingExamIds.indexOf(exam.id) != -1) {
-            const report = reportings.filter(r => r.exam_name == exam.id)
-            const mainReport = Object.assign({}, report)[0]
-            delete mainReport.id
-            // console.log(mainReport.value)
-              return {
-                ...exam,
-                ...mainReport,
-              }
+            const particularExamReport = reportings.filter(r => r.exam_name == exam.id);
+            const theHighestOne = particularExamReport.reduce((a, b) => Math.max(a, Number(b.score)), 0);
+            const averageMark = particularExamReport.reduce((acc, currentValue) => acc + Number(currentValue.score), 0) / particularExamReport.length;
+            return {
+              ...exam,
+              averageMark: averageMark.toFixed(2),
+              highestMark: theHighestOne,
+              particularExamReport: particularExamReport
+            }
           } else {
             return false;
           }
         }).filter(Boolean)
-        // console.log(examReports)
-        context.commit(reportingMutationsTypes.LOAD_STUDENT_REPORTING, examReports);
+        console.log(exams)
+
+
+
+        // context.commit(reportingMutationsTypes.LOAD_STUDENT_REPORTING, examReports);
       }
 
     } else {
@@ -69,16 +75,16 @@ const actions = {
 
     if(data) {
       const specificReportsData = data;
-      const allStudentList = context.rootState.userState.allStudentList;
+      const studentList = context.rootState.adminState.studentList;
       
       
-      if(context.rootState.userState.allStudentList.length !== 0 && specificReportsData.length !== 0) {
+      if(context.rootState.adminState.studentList.length !== 0 && specificReportsData.length !== 0) {
         
-        //console.log(specificReportsData, allStudentList)
+        //console.log(specificReportsData, studentList)
 
         const specificReportsUserIds = specificReportsData.map(s => s.student);
 
-        const specificReports = allStudentList.map(student => {
+        const specificReports = studentList.map(student => {
           if(specificReportsUserIds.indexOf(student.user) != -1) {
             const sReport = specificReportsData.filter(sR => sR.student == student.user);
             const mainSReport = Object.assign({}, sReport)[0];

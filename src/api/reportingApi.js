@@ -2,9 +2,9 @@ import { getAuthorizationHeader } from "./common";
 import axios from 'axios'
 const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQyNjk4NzQzLCJqdGkiOiJjMTQ3NDgyZWRhMDI0NjU4ODNkZmNmNWFhYWM4ODRmOSIsInVzZXJfaWQiOjg4fQ.Kz2vQS6LfP-wfghrkRC6ufa-_1pKeHAOXLr-c_2E4Dc'
 
-const getStudentReporting = async () => {
+const getAdminReporting = async () => {
     try{
-      const res = await axios.get('https://www.exam.poc.ac/api/show_all_report/',
+      const res = await axios.get('https://www.exam.poc.ac/api/get_student_report/',
       {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -43,6 +43,6 @@ const getSpecificReporting = async (exam_name) => {
 }
 
 export default {
-  getStudentReporting,
+  getAdminReporting,
   getSpecificReporting
 }
