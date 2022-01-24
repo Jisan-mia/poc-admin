@@ -4,6 +4,7 @@ import { reportingMutationsTypes } from "./reporting.mutationTypes"
 const state = {
   reportings: [],
   specificReportings: [],
+  studentWiseReportings: null,
 }
 
 const mutations = {
@@ -14,6 +15,9 @@ const mutations = {
   [reportingMutationsTypes.LOAD_SPECIFIC_REPORTING](state, payload) {
     state.specificReportings = payload;
     //console.log(state)
+  },
+  setOnlyReportings(state, payload) {
+    state.studentWiseReportings = payload
   }
 }
 
@@ -29,6 +33,35 @@ const actions = {
       const reportings = [...data];
       const examLists = context.rootState.examPackState.examLists;
       if(context.rootState.examPackState.examLists.length !== 0 && reportings.length !== 0) {
+        
+        
+        // SET ONLY REPORTINGS
+        const onlyReportings = {}
+        reportings.forEach(report => {
+          const reportExam = examLists.find(exam => exam.id == report.exam_name)
+
+          if(onlyReportings[report.student]) {
+            onlyReportings[report.student] = [
+              ...onlyReportings[report.student],
+              {
+                ...report,
+                ...reportExam
+              }
+            ]
+          } else {
+            onlyReportings[report.student] = [
+              {
+                ...report,
+                ...reportExam
+              }
+            ]
+          }
+        })
+        // console.log(onlyReportings)
+        context.commit('setOnlyReportings', onlyReportings)
+
+
+
         const reportingExamIdsD = reportings.map(r => r.exam_name);
         // without exam name duplicates
         const reportingExamIds = [...new Set(reportingExamIdsD)]
@@ -38,13 +71,20 @@ const actions = {
           if(reportingExamIds.indexOf(exam.id) != -1) {
             const particularExamReport = reportings.filter(r => r.exam_name == exam.id);
             const theHighestOne = particularExamReport.reduce((a, b) => Math.max(a, Number(b.score)), 0);
-            const averageMark = particularExamReport.reduce((acc, currentValue) => acc + Number(currentValue.score), 0) / particularExamReport.length;
-            const t =  particularExamReport.reduce((acc, currentValue) => acc + Number(currentValue.score), 0)
-            const a = (averageMark / t) * 100
+
+            const aMark = particularExamReport.map(report => {
+              return (Number(report.score)/Number(exam.total_mark)) * 100
+            })
+            const allPercentageSum = aMark.reduce((acc, currentAverage) => acc + currentAverage, 0);
+
+            const mainAverage = (allPercentageSum/aMark.length)
+
+
+
+
             return {
               ...exam,
-              averageMark: averageMark,
-              averageP: a,
+              averageP: mainAverage,
               highestMark: theHighestOne,
               particularExamReport: particularExamReport
             }

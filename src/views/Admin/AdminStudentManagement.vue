@@ -45,12 +45,21 @@
             Batch
           </span>
         </td>
+        <td>
+          <span>
+            Profile Status
+          </span>
+        </td>
+        <td>
+          <span>
+          </span>
+        </td>
       </tr>
       
 
-      <tr class="main_row" v-for="student in allStudentList" :key="student.id">
+      <tr class="main_row" v-for="student in allStudentList" :key="student.user">
         <td> 
-          <router-link :to="{name: 'SpecificStudent', params: {studentId: student.id}}">
+          <router-link :to="{name: 'SpecificStudent', params: {studentId: student.user}}">
             <span class="phone">
               01301822644
             </span>
@@ -78,6 +87,17 @@
             {{student.level}} {{student.batch}}
           </span>
         </td>
+
+        <td>
+          <span>
+            <BlockingSwitch v-model="isActive" />
+          </span>
+        </td>
+        <td>
+          <span>
+            <i @click="handleDeleteStudent(student)" class="far fa-trash-alt"></i>
+          </span>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -89,56 +109,54 @@
 import { computed, ref } from '@vue/runtime-core';
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex';
+import BlockingSwitch from '../../components/ui/BlockingSwitch.vue';
 export default {
-  name: 'AdminStudentManagement',
-  setup() {
-    const route = useRoute();
-    const store = useStore();
-    const boardSelected = ref('')
-    const phoneSearch =ref('')
-    const allStudentListD = computed(() => store.state.adminState.studentList);
-    console.log(allStudentListD.value)
-
-    // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
-    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
-
-
-    const allStudentList = computed(() => {
-      if(phoneSearch.value || boardSelected.value) {
-        let allStudentMain = ref(allStudentListD.value)
-        // console.log(allStudentMain.value)
-        if(phoneSearch.value) {
-           allStudentMain.value = allStudentMain.value.filter(student => {
-            return phoneSearch.value.toLowerCase().split(' ').every(v => student.name.toLowerCase().includes(v)) 
-          })
-        } 
-        if(boardSelected.value) {
-            allStudentMain.value = allStudentMain.value.filter(student => {
-              if(boardSelected.value == 'all') return student
-              return student.board.toLowerCase().includes(boardSelected.value.toLowerCase())
-            })
-        }
-        return allStudentMain.value
-
-      } else {
-        return allStudentListD.value
-      }
-    })
-
-
-
-
-
-
-    
-
-    return {
-      allStudentList,
-      imageUrl,
-      boardSelected,
-      phoneSearch
-    }
-  }
+    name: "AdminStudentManagement",
+    setup() {
+        const route = useRoute();
+        const store = useStore();
+        const isActive = ref(true);
+        const boardSelected = ref("");
+        const phoneSearch = ref("");
+        const allStudentListD = computed(() => store.state.adminState.studentList);
+        console.log(allStudentListD.value);
+        // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+        const imageUrl = computed(() => (img) => img.includes("https://www.exam.poc.ac") || img.includes("http://www.exam.poc.ac") ? img : `https://www.exam.poc.ac${img}`);
+        const allStudentList = computed(() => {
+            if (phoneSearch.value || boardSelected.value) {
+                let allStudentMain = ref(allStudentListD.value);
+                // console.log(allStudentMain.value)
+                if (phoneSearch.value) {
+                    allStudentMain.value = allStudentMain.value.filter(student => {
+                        return phoneSearch.value.toLowerCase().split(" ").every(v => student.name.toLowerCase().includes(v));
+                    });
+                }
+                if (boardSelected.value) {
+                    allStudentMain.value = allStudentMain.value.filter(student => {
+                        if (boardSelected.value == "all")
+                            return student;
+                        return student.board.toLowerCase().includes(boardSelected.value.toLowerCase());
+                    });
+                }
+                return allStudentMain.value;
+            }
+            else {
+                return allStudentListD.value;
+            }
+        });
+        const handleDeleteStudent = (student) => {
+            // console.log(student)
+        };
+        return {
+            allStudentList,
+            imageUrl,
+            boardSelected,
+            phoneSearch,
+            handleDeleteStudent,
+            isActive
+        };
+    },
+    components: { BlockingSwitch }
 }
 </script>
 
@@ -159,11 +177,11 @@ table {
   tbody tr{
     border-bottom: 1px solid #CDCDCD;
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 0.5fr;
     // grid-template-columns: repeat(6, 1fr);
     @include maxMedia(768px) {
       // grid-template-columns: repeat(6, 200px);
-      grid-template-columns: 200px 350px 180px 100px;
+      grid-template-columns: 200px 350px 180px 100px 100px 60px;
     }
 
 
@@ -259,9 +277,14 @@ table {
     // grid-column: span 2
     min-width: 300px;
   }
-  tr td:last-child {
+  tr td:nth-child(5), tr td:last-child {
     text-align: center;
     justify-content: center;
+  }
+
+  .fa-trash-alt {
+    color: #ff0000;
+    cursor: pointer;
   }
 
 }
