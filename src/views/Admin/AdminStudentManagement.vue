@@ -99,7 +99,8 @@ export default {
     const allStudentListD = computed(() => store.state.adminState.studentList);
     console.log(allStudentListD.value)
 
-    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+    // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
 
 
     const allStudentList = computed(() => {

@@ -1,10 +1,18 @@
 <template>
   <header>
     <div class="header__input">
-      <input type="text" placeholder="Search With Exam ID" name="" id="">
-      <input type="datetime-local" name="" id="" placeholder="Date Range">
+      <input v-model="idSearch" type="text" placeholder="Search With Exam ID" name="" id="">
+      <!-- <input type="datetime-local" name="" id="" placeholder="Date Range"> -->
+      <select name="level" id="level" v-model="selectedLevel">
+        <option selected disabled value="">Level</option>
+        <option value="all">All Level</option>
+        <option value="HSC">HSC</option>
+        <option value="SSC">SSC</option>
+        <option value="O-level">O-Level</option>
+      </select>
     </div>
   </header>
+  <div class="table__main">
   <table>
     <tbody>
       <tr>
@@ -41,227 +49,120 @@
         
 
         <td class="id" > 
-          <router-link :to="{name: 'SpecificExamReport', params: {examId: report.examId}}">
-            <span>
-              #{{report.examId}}
+            <span @click="handleSpecificReportShow(report,cutHash(report.exam_id))">
+
+              {{report.exam_id}}
             </span>
-          </router-link>
          
         </td>
         <td class="subject">
-          <router-link :to="{name: 'SpecificExamReport', params: {examId: report.examId}}">
             <span>
-              {{report.subject}}
+              {{report.Exam_name}}
             </span>
-          </router-link>
         </td>
         <td>
           <div class="date__time">
-            <span class="date">{{report.date.date}}</span>
-            <span class="time">{{report.date.time}}</span>
+            <span class="date">
+              {{dateF(report.Exam_start_date)}} <!-- changed from Exam_end_date -->
+
+            </span>
+            <span class="time">
+              {{timeF(report.Exam_start_date, report.Exam_start_time)}}
+
+            </span>
           </div>
         </td>
 
         <td class="highest">
           <span>
-            {{`${report.highest_score.own}/${report.highest_score.max}`}}
+            {{report.highestMark}}/{{report.total_mark}}
           </span>
         </td>
         <td class="average">
           <span>
-            {{report.average_mark}}%
+            {{report.averageP.toFixed(2)}}%
           </span>
         </td>
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <script>
 import { computed, onMounted, ref } from '@vue/runtime-core';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex';
+import dayjs from 'dayjs'
 export default {
   name: 'ReportingComp',
   setup() {
     const route = useRoute();
-    const reports = ref([
-      {
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '1/22',
-          time: '06:00 PM'
+    const router = useRouter()
+    const store = useStore();
+    const selectedLevel = ref('');
+    const idSearch = ref('')
+    const reportsD = computed(() => store.state.reportingState.reportings)
+
+    const reports = computed(() => {
+      if(idSearch.value || selectedLevel.value) {
+        let allReportsMain = ref(reportsD.value)
+        // console.log(allReportsMain.value)
+        if(idSearch.value) {
+           allReportsMain.value = allReportsMain.value.filter(report => {
+            return idSearch.value.toLowerCase().split(' ').every(v => report.exam_id.toLowerCase().includes(v)) 
+          })
+        } 
+        if(selectedLevel.value) {
+            allReportsMain.value = allReportsMain.value.filter(report => {
+              if(selectedLevel.value == 'all') return report
+              return report.level.toLowerCase().includes(selectedLevel.value.toLowerCase())
+            })
         }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2020',
-        subject: 'Physics 2st Paper',
-        date: {
-          date: '2/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2021',
-        subject: 'Chemistry 2st Paper',
-        date: {
-          date: '3/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Chemistry 1st Paper',
-        date: {
-          date: '4/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2021',
-        subject: 'Higher Math 1st Paper',
-        date: {
-          date: '6/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Higher Math 2st Paper',
-        date: {
-          date: '7/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2023',
-        subject: 'Chemistry',
-        date: {
-          date: '8/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2020',
-        subject: 'Chemistry',
-        date: {
-          date: '9/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Physics',
-        date: {
-          date: '10/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2021',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '11/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2023',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '13/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2020',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '14/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2021',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '15/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2023',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '16/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '17/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2023',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '18/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '19/22',
-          time: '06:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2021',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '21/22',
-          time: '07:00 PM'
-        }
-      },{
-        highest_score: {own: 20, max: 30},
-average_mark: 55.33,
-examId: 'HSC2022',
-        subject: 'Physics 1st Paper',
-        date: {
-          date: '23/3',
-          time: '06:00 PM'
+        return allReportsMain.value
+
+      } else {
+        return reportsD.value
+      }
+    })
+
+
+
+
+
+    const cutHash = computed(() => (id) => id.split('').filter(c => c == '#' ? false : c).join(''))
+
+
+    const timeF = computed(() => (date, time) => {
+        const examDate = dayjs(date + time).format("YYYY-MM-DD hh:mm:ss A");
+        return dayjs(examDate).format("hh:mm A");
+    });
+    const dateF = computed(() => (date) => {
+      return dayjs(date).format('DD/MM/YYYY');
+    });
+
+
+    const handleSpecificReportShow = (report,exam_id) => {
+      const routeData = {
+        name: 'SpecificExamReport',
+        params: {
+          examId: exam_id
         }
       }
-    ])
-    onMounted(() => {
-    })
+      router.push(routeData)
+    }
+
+
+
+
     return {
-      reports
+      reports,
+      timeF,
+      dateF,
+      idSearch,
+      selectedLevel,
+      cutHash,
+      handleSpecificReportShow
     }
   }
 }
@@ -269,6 +170,13 @@ examId: 'HSC2022',
 
 <style lang="scss" scoped>
 @import '@/styles/config.scss';
+.table__main{
+  width: 100%;
+  margin-bottom: 2rem;
+  @include maxMedia(768px) {
+    overflow-x: scroll;
+  }
+}
 table {
   border-collapse: collapse;
   width: 100%;
@@ -277,9 +185,10 @@ table {
     display: grid;
     // grid-template-columns: 1fr 2fr 1.5fr 1.5fr 1.5fr;
     grid-template-columns: repeat(5, 1fr);
-    // @include maxMedia(968px) {
-    //   display: inherit;
-    // }
+    @include maxMedia(968px) {
+      grid-template-columns: repeat(5, 150px);
+
+    }
 
     &:first-child{
       border: none;
@@ -341,14 +250,20 @@ table {
 
 }
 .header__input{
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 180px);
   justify-content: flex-start;
   align-content: center;
   gap: 0.85rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
+  @include maxMedia(768px) {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))
+  }
 
-  input {
-    border: 1px solid #FF6F00;
+  input, select {
+    border: 1px solid #00a9dc;
+
     box-sizing: border-box;
     border-radius: 8px;
     font-weight: 500;
@@ -356,17 +271,13 @@ table {
     line-height: 0.9rem;
     outline: none;
     padding: 0.7rem 1rem;
+    width: 100%;
     &::placeholder{
       color: #696969;
     }
   }
-  input[type='text'] {
-    min-width: 15%;
-    width: 25%;
-  }
-  input[type='datetime-local'] {
-    min-width: 15%;
-    width: 22%;
+  select{
+    text-align: left;
   }
   
 }

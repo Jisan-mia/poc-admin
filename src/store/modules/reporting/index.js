@@ -24,7 +24,7 @@ const actions = {
     const data = await res.data;
 
     if(data) {
-      console.log(context.rootState.examPackState.examLists, data)
+      // console.log(context.rootState.examPackState.examLists, data)
 
       const reportings = [...data];
       const examLists = context.rootState.examPackState.examLists;
@@ -34,14 +34,17 @@ const actions = {
         const reportingExamIds = [...new Set(reportingExamIdsD)]
         // console.log(reportingExamIds)
 
-        const exams = examLists.map(exam => {
+        const examsWithReport = examLists.map(exam => {
           if(reportingExamIds.indexOf(exam.id) != -1) {
             const particularExamReport = reportings.filter(r => r.exam_name == exam.id);
             const theHighestOne = particularExamReport.reduce((a, b) => Math.max(a, Number(b.score)), 0);
             const averageMark = particularExamReport.reduce((acc, currentValue) => acc + Number(currentValue.score), 0) / particularExamReport.length;
+            const t =  particularExamReport.reduce((acc, currentValue) => acc + Number(currentValue.score), 0)
+            const a = (averageMark / t) * 100
             return {
               ...exam,
-              averageMark: averageMark.toFixed(2),
+              averageMark: averageMark,
+              averageP: a,
               highestMark: theHighestOne,
               particularExamReport: particularExamReport
             }
@@ -49,11 +52,11 @@ const actions = {
             return false;
           }
         }).filter(Boolean)
-        console.log(exams)
+        // console.log(examsWithReport)
 
 
 
-        // context.commit(reportingMutationsTypes.LOAD_STUDENT_REPORTING, examReports);
+        context.commit(reportingMutationsTypes.LOAD_STUDENT_REPORTING, examsWithReport);
       }
 
     } else {
@@ -74,6 +77,11 @@ const actions = {
     const data = await res.data;
 
     if(data) {
+      if(data.length === 0) {
+        context.commit(reportingMutationsTypes.LOAD_SPECIFIC_REPORTING, []);
+        return;
+
+      }
       const specificReportsData = data;
       const studentList = context.rootState.adminState.studentList;
       
