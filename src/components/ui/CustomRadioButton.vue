@@ -22,10 +22,10 @@ export default {
   name: "CustomRadioButton",
   props: {
     modelValue: {
-        type: String
+        type: [String, Boolean]
     },
     option: {
-        type: String
+        type: [String, Boolean]
     },
     isEditOption: {
         type: Boolean,

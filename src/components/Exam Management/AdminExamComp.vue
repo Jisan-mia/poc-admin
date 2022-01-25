@@ -66,7 +66,6 @@
                 <option v-for="pack in examPacks" :key="pack.id" :value="pack.id">
                   {{pack.ExamPack_name}}
                 </option>
-               
               </select>
             </div>
           </div>

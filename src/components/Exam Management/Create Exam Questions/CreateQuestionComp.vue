@@ -2,7 +2,7 @@
   <div class="questionCont">
     <div class="inner">
       <div class="question__area">
-        <component :is="comp" v-bind="compProps" />
+        <component :is="comp" v-bind="compProps" @onSaveQuestion="handleSaveQ"/>
       </div>
 
       <div class="selection__area">
@@ -33,16 +33,27 @@ import CustomAdminBtn from '../../ui/CustomAdminBtn.vue';
 import CreateQuestionTypeA from './CreateQuestionTypeA.vue';
 import CreateQuestionTypeB from './CreateQuestionTypeB.vue';
 import CreateQuestionTypeC from './CreateQuestionTypeC.vue';
+import { v4 as uuidv4 } from 'uuid';
 
 import { watchEffect } from '@vue/runtime-core';
 
 export default {
   name: "CreateQuestionComp",
+  props: {
+    examPack: {
+      type: Number,
+    },
+    examName: {
+      type: Number
+    }
+  },
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, CreateQuestionTypeA,CreateQuestionTypeB, CreateQuestionTypeC },
-  setup() {
+  setup(props) {
 
     const typeOptions = ref(['Type 01', 'Type 02', 'Type 03']);
     const typeSelected = ref('Type 01')
+
+
     const comp = ref('CreateQuestionTypeA')
     watchEffect(() => {
       comp.value = 
@@ -52,20 +63,44 @@ export default {
           ? 'CreateQuestionTypeB'
           : 'CreateQuestionTypeC'
     })
+    const examPack = props.examPack;
+    const examName = props.examName;
 
     const questionTypeOne = ref({
-      img: '',
-      type: "A",
-      correctAns: '',
-      question: "",
+      uuid: uuidv4(),
+      exam_pack: examPack,
+      exam_name: examName,
+      question_name: '',
+      q_image: '',
+      selectedOption: '',
       options: [
-          "Option1",
-          "Option2",
-          "Option3",
-          "Option4"
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          }
       ],
 
     })
+
+    
+
+    
 
     const questionTypeTwo = ref({
       img: '',
@@ -139,11 +174,18 @@ export default {
         }
       } 
     })
+
+
+    const handleSaveQ = (question, type) => {
+      console.log('save from main')
+      console.log(question, type)
+    }
     return {
       typeOptions,
       typeSelected,
       comp,
-      compProps
+      compProps,
+      handleSaveQ
     }
   }
 }

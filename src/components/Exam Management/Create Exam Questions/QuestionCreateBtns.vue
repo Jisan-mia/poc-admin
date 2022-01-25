@@ -1,12 +1,12 @@
 <template>
   <div class="btns">
-    <button class="delete">
+    <button class="delete" @click="$emit('onQuestionDelete')">
       <i class="far fa-trash-alt fa-2x"></i>
       <span>Delete Question</span>
     </button>
 
     <div class="wrapper">
-      <CustomAdminBtn type="info" :rounded="true">
+      <CustomAdminBtn type="info" :rounded="true" @click="$emit('onQuestionSave')">
         Save
       </CustomAdminBtn>
     </div>
