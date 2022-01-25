@@ -6,7 +6,6 @@
         :options="examPackList"
         :style="selectStyle"
         placeholder="Exam Pack"
-
       />
     </div>
 
@@ -24,6 +23,13 @@
   <div class="questionComp">
     <CreateQuestionComp />
   </div>
+
+  <div class="wrapper">
+    <CustomAdminBtn type="primary" icon="fas fa-plus" @onClick="handleAddAnotherQuestion" :rounded="true" >
+       Add Question 
+    </CustomAdminBtn>
+  </div>
+
   
 </template>
 
@@ -31,9 +37,10 @@
 import CustomSelect from "../../ui/CustomSelect.vue";
 import { ref } from '@vue/reactivity';
 import CreateQuestionComp from "./CreateQuestionComp.vue";
+import CustomAdminBtn from "../../ui/CustomAdminBtn.vue";
 export default {
   name: "CreateAllExamQuestion",
-  components: { CustomSelect, CreateQuestionComp },
+  components: { CustomSelect, CreateQuestionComp, CustomAdminBtn },
   setup() {
     const selectStyle = {
       borderRadius: '10px', 
@@ -46,13 +53,19 @@ export default {
     const examPackList = ref(['Elite Exam Pack1', 'Elite Exam Pack2', 'Elite Exam Pack3']);
     const examList = ref(['Physics 1st chapter', 'Physics 2nd chapter', 'Force Chapter'])
     const selectedExam = ref('')
-    const selectedPack = ref('')
+    const selectedPack = ref('');
+
+
+    const handleAddAnotherQuestion = () => {
+      console.log('create another question')
+    }
     return {
       selectStyle,
       examList,
       examPackList,
       selectedExam,
-      selectedPack
+      selectedPack,
+      handleAddAnotherQuestion
     };
   },
 }
@@ -75,5 +88,8 @@ export default {
   }
     
 }
-
+.wrapper {
+  margin: 2rem 0;
+  max-width: 250px;
+}
 </style>

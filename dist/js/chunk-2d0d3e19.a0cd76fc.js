@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0d3e19"],{"5f3e":function(e,n,t){"use strict";t.r(n);var a=t("7a23");function o(e,n,t,o,r,c){var i=Object(a["G"])("CreateAllExamQuestion");return Object(a["y"])(),Object(a["e"])(i)}var r=t("743e"),c={components:{CreateAllExamQuestion:r["a"]},name:"MainQuestionEditor"},i=t("6b0d"),s=t.n(i);const u=s()(c,[["render",o]]);n["default"]=u}}]);
+//# sourceMappingURL=chunk-2d0d3e19.a0cd76fc.js.map
