@@ -31,16 +31,13 @@ export default {
     store.commit('setIsLoading', true)
 
     watchEffect( async () => {
-      if(isAuthenticated.value) {
+      if(isAuthenticated.value && localStorage.getItem('token')) {
         try{
             await store.dispatch('examPackState/loadExamPacks');
             await store.dispatch('examPackState/loadExamLists');
             await store.dispatch('adminState/loadStudentList');
             await store.dispatch('reportingState/loadAdminReporting');
 
-            
-
-            
             // await store.dispatch('examPackState/loadExamLists');
             // await store.dispatch('reportingState/loadStudentReporting');
             store.commit('setIsLoading', false)

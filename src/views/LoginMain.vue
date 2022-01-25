@@ -6,7 +6,16 @@
 
     <form @submit.prevent="handleUserLogin">
       <CustomPhoneInput v-model="userAuthInput.phone_number" placeholder="Enter your phone number" />
-      <CustomAuthInput v-model="userAuthInput.password" placeholder="Enter your password" type="text"/>
+      <div class="cont">
+        <CustomAuthInput v-model="userAuthInput.password" placeholder="Enter your password"  :type="inputType"/>
+        <span class="btn" @click="showPassword = !showPassword" v-if="!showPassword" >
+          <i class="fas fa-eye-slash" ></i>
+        </span>
+
+        <span class="btn" @click="showPassword = !showPassword" v-else-if="showPassword"  >
+          <i class="fas fa-eye" ></i>
+        </span>
+      </div>
 
       <!-- <CustomLoginRegisterBtn  buttonText="Login" /> -->
       <CustomLoginRegisterBtn  buttonText="Login" :isSpin="buttonLoading"/>
@@ -29,7 +38,11 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const showPassword = ref(false)
     const buttonLoading = ref(false)
+
+    const inputType = computed(() => showPassword.value ? "text" : "password")
+
 
     
     const userAuthInput = ref({
@@ -68,7 +81,9 @@ export default {
     return {
       userAuthInput,
       handleUserLogin,
-      buttonLoading
+      buttonLoading,
+      inputType,
+      showPassword
     }
   }
 }
@@ -76,6 +91,27 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/config.scss';
+
+.cont{
+  position: relative;
+  input {
+    width: 90% !important;
+  }
+
+  .btn {
+    border: none;
+    outline: none;
+    position: absolute;
+    top: 38%;
+    right: 4%;
+    border: 0;
+    z-index: 2;
+    cursor: pointer;
+    background-color: #fff;
+    width: 30px;
+  }
+
+  }
 .login_cont {
   height: 100%;
   display: flex;

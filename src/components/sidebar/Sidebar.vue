@@ -3,7 +3,8 @@ import SidebarLink from './SidebarLink'
 import { ref } from 'vue'
 import { isActive, toggleActive } from './state'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import axios from 'axios'
 export default {
   props: {},
   components: { SidebarLink },
@@ -11,22 +12,22 @@ export default {
     const store = useStore();
     const router = useRouter();
     
-    const handleLogout = async () => {
-      
-      
-      try {
-        const res = axios.get('https://www.exam.poc.ac/api/LogOut/',
-        {
-          headers: `Bearer ${localStorage.getItem('token')}`
-        })
-        localStorage.removeItem('token')
-        localStorage.removeItem('userId')
-        store.commit('adminState/initializeStore')
-        router.push('/logout')
+    const handleLogout = () => {
+    
+      // try {
+      //   const res = await axios.get('https://www.exam.poc.ac/api/LogOut/',
+      //   {
+      //     headers: `Bearer ${localStorage.getItem('token')}`
+      //   })
+        
+      // } catch(err){
+      //   console.log(err)
+      // }
 
-      } catch(err){
-        console.log(err)
-      }
+      localStorage.removeItem('token')
+      localStorage.removeItem('userId')
+      store.commit('adminState/initializeStore')
+      router.push('/logout')
     }
   
     return { toggleActive, isActive, handleLogout }

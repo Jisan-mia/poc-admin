@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppLayout from '../layouts/AppLayout.vue';
+import { computed } from 'vue';
+import store from '../store';
+
 // const lazyLoadExam = (view) => () => import(`@/views/Exam Management/${view}.vue`);
 const lazyLoadLogin = (view) => () => import(`@/views/${view}.vue`);
 const lazyLoadAdmin = (view) => () => import(`@/views/Admin/${view}.vue`);
@@ -34,7 +37,8 @@ const routes = [
         name: 'SpecificExamReport',
         component: lazyLoadAdmin('AdminSpecificExamReport'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -42,7 +46,8 @@ const routes = [
         name: 'SpecificStudent',
         component: lazyLoadAdmin('AdminSpecificStudent'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
 
@@ -52,7 +57,8 @@ const routes = [
         name: 'AdminDashboard',
         component: lazyLoadAdmin('AdminDashboard'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -60,7 +66,8 @@ const routes = [
         name: 'AdminExam_Pack',
         component: lazyLoadAdmin('AdminExam_Pack'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -68,7 +75,8 @@ const routes = [
         name: 'AdminExamManagement',
         component: lazyLoadAdmin('AdminExamManagement'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -76,7 +84,8 @@ const routes = [
         name: 'AdminStudentManagement',
         component: lazyLoadAdmin('AdminStudentManagement'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -84,7 +93,8 @@ const routes = [
         name: 'AdminReporting',
         component: lazyLoadAdmin('AdminReporting'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -92,7 +102,8 @@ const routes = [
         name: 'AdminUserManagement',
         component: lazyLoadAdmin('AdminUserManagement'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -100,7 +111,8 @@ const routes = [
         name: 'AdminAccountManagement',
         component: lazyLoadAdmin('AdminAccountManagement'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
     {
@@ -108,7 +120,8 @@ const routes = [
         name: 'AdminBatchSettings',
         component: lazyLoadAdmin('AdminBatchSettings'),
         meta: {
-            layout: AppLayout
+            layout: AppLayout,
+            requireLogin: true
         }
     },
 ]
@@ -118,12 +131,15 @@ const router = createRouter({
     routes
 })
 
-// router.beforeEach((to, from, next) => {
-//     const isAuthenticated = false;
-//     const loginViews = () => to.name === 'Login';
-//     if (!loginViews() && !isAuthenticated) next({ name: 'Login' })
-//     else next()
-// })
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = computed(() => store.state.adminState.user.isAuthenticated)
+    
+    if (to.matched.some(record => record.meta.requireLogin) && !isAuthenticated.value) {
+        next('/')
+    } else {
+        next()
+    }
+})
 
 
 export default router

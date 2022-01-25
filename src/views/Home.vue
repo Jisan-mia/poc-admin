@@ -13,7 +13,7 @@
 import { computed, ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { watchEffect } from '@vue/runtime-core';
+import { watchEffect, watch, onMounted } from '@vue/runtime-core';
 import Login from './Login.vue';
 import AdminDashboard from './Admin/AdminDashboard.vue';
 export default {
@@ -22,13 +22,20 @@ export default {
     const store = useStore();
     const router = useRouter();
     const isAuthenticated = computed(() => store.state.adminState.user.isAuthenticated);
-    // console.log("homie", isAuthenticated)
+    console.log("homie", isAuthenticated.value)
+    // router.go();
+
+    watch(isAuthenticated.value, () => {
+      router.go();
+    })
+
     
    
 
-    watchEffect(async () => {
+    onMounted(() => {
       if(isAuthenticated.value) {
-        router.push('/dashboard')
+        console.log('logged')
+        router.push({path: '/dashboard'});
       } else {
         localStorage.removeItem('token')
         localStorage.removeItem('userId')

@@ -123,13 +123,19 @@ const actions = {
         } return exam
       })
       //console.log(mainExam)
+      if(localStorage.getItem('token')) {
+        context.commit(examPackMutationTypes.SET_EXAM_LIST, mainExam)
+      } else {
+        // 
+      }
 
-      context.commit(examPackMutationTypes.SET_EXAM_LIST, mainExam)
     } else {
       const notification = {
         type: 'error',
         message: 'Error getting exam lists'
       }
+
+
 
       context.dispatch('notifications/add', notification , {root: true})
       
