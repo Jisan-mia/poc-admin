@@ -83,11 +83,6 @@ const actions = {
     if(data) {
       context.commit('setAllStudent', data)
 
-      // const userId = context.state.user.userId
-      // console.log(userId)
-      // const profile = data.find(profile => profile.user == userId)
-      // context.commit('setProfile', profile)
-
     } else {
       const notification = {
         type: 'error',
@@ -99,6 +94,42 @@ const actions = {
     }
   },
   
+
+  async blockAStudent(context, phone_number) {
+    const res = await adminApi.blockStudent(phone_number);
+    // console.log(res)
+
+    const data = await res.data
+    if(data) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Blocked'} , {root: true})
+
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Error blocking student'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})
+      throw new Error('Error blocking student')
+    }
+  },
+  async deleteAStudent(context, payload) {
+    const res = await adminApi.deleteStudent(payload);
+    // console.log(res)
+
+    const data = await res.data
+    if(data) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Error deleting student'
+      }
+      context.dispatch('notifications/add', notification , {root: true})
+      throw new Error('Error deleting student')
+    }
+  },
+
   async updateAdminProfile (context, profile) {
     const mainProfile = {...profile}
     if(!mainProfile.Profile_image || typeof mainProfile.Profile_image == 'string') {
