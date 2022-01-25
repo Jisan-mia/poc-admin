@@ -6,6 +6,7 @@ import store from '../store';
 // const lazyLoadExam = (view) => () => import(`@/views/Exam Management/${view}.vue`);
 const lazyLoadLogin = (view) => () => import(`@/views/${view}.vue`);
 const lazyLoadAdmin = (view) => () => import(`@/views/Admin/${view}.vue`);
+
 const routes = [
     // general routes
     
@@ -74,6 +75,15 @@ const routes = [
         path: '/exam-management',   
         name: 'AdminExamManagement',
         component: lazyLoadAdmin('AdminExamManagement'),
+        meta: {
+            layout: AppLayout,
+            requireLogin: true
+        }
+    },
+    {
+        path: '/question-editor',   
+        name: 'MainQuestionEditor',
+        component: lazyLoadAdmin('MainQuestionEditor'),
         meta: {
             layout: AppLayout,
             requireLogin: true

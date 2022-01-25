@@ -22,9 +22,9 @@
     <AdminExamComp :editExam="editExam"  @backExam="handleBack" @onQuestionEditor="handleQuestionEditor"/>
   </span>
 
-  <span v-else-if="currentCompState === 'questionEditor'">
+  <!-- <span v-else-if="currentCompState === 'questionEditor'">
     <CreateAllExamQuestion />
-  </span>
+  </span> -->
 
 </template>
 <script>
@@ -34,6 +34,7 @@ import ExamCard from '../../components/Exam Management/ExamCard.vue'
 import AdminExamComp from '../../components/Exam Management/AdminExamComp.vue'
 import CreateAllExamQuestion from '@/components/Exam Management/Create Exam Questions/CreateAllExamQuestion.vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
   name: "AdminExamManagement",
@@ -48,6 +49,7 @@ export default {
 },
   setup() {
     const store = useStore();
+    const router = useRouter();
     const upcomingExam = computed(() => store.state.examPackState.examLists)
     const upcomingExamD = ref([
         {
@@ -143,11 +145,11 @@ export default {
 
     const handleBack = () => {
       currentCompState.value = 'examManagement'
-
     }
 
     const handleQuestionEditor = () => {
       currentCompState.value = 'questionEditor'
+      router.push('/question-editor');
     }
 
 

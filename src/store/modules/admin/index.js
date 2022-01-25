@@ -67,7 +67,7 @@ const actions = {
     } else {
       const notification = {
         type: 'error',
-        message: 'No user found'
+        message: "You've not access to this"
       }
 
       context.dispatch('notifications/add', notification , {root: true})

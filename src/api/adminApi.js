@@ -4,7 +4,7 @@ import { getAuthorizationHeader } from './common';
 const handleUserLogin = async (data) => {
   try{
     const res = await axios.post(
-      `https://www.exam.poc.ac/api/token/`,
+      `https://www.exam.poc.ac/api/admin_login/`,
       {
         ...data,
       },

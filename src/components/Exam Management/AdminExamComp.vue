@@ -269,7 +269,11 @@ export default {
     // to question editor
     const handleQuestionEditor = () => {
       console.log('question editor')
-      context.emit('onQuestionEditor')
+      if(isValid()) {
+        
+
+        context.emit('onQuestionEditor')
+      }
     }
 
     // create an exam
