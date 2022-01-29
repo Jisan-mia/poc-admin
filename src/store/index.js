@@ -7,6 +7,7 @@ import { examPack } from './modules/examPack'
 import { reporting } from './modules/reporting'
 import {examResult} from './modules/examResult'
 import { admin } from './modules/admin';
+import { batchSettings } from './modules/batchSettings';
 
 export default createStore({
   state: {
@@ -25,6 +26,7 @@ export default createStore({
     examPackState: examPack,
     reportingState: reporting,
     examResult: examResult,
-    adminState: admin
+    adminState: admin,
+    batchSettings: batchSettings
   }
 })

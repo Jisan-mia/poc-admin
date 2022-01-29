@@ -2,7 +2,7 @@
   <div class="container">
     <div class="left">
       <div class="img__container" :class="{img__create: isAdminExamPackCreate && !previewImage}">
-        <img :src="previewImage ? previewImage : examPack.pack_image ? imageUrl(examPack.pack_image) : '/images/placeholderImg.svg'" alt="">
+        <img :src="previewImage ? previewImage : typeof examPack.pack_image == 'string' ? imageUrl(examPack.pack_image) : '/images/placeholderImg.svg'" alt="">
         <span>
           <ImgInputModel v-model="examPack.pack_image" @imagInput="handleIInput"/>
         </span>

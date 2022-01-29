@@ -3,7 +3,7 @@
     <div class="left">
 
       <div class="img__container" :class="{img__create: isExamManageCreate && !previewImage}">
-        <img :src="previewImage ? previewImage : examInfo.cover_photo ? imageUrl(examInfo.cover_photo) : '/images/placeholderImg.svg'" alt="">
+        <img :src="previewImage ? previewImage : typeof examInfo.cover_photo == 'string' ? imageUrl(examInfo.cover_photo) : '/images/placeholderImg.svg'" alt="">
         <span>
           <ImgInputModel v-model="examInfo.cover_photo" @imagInput="handleIInput"/>
         </span>
