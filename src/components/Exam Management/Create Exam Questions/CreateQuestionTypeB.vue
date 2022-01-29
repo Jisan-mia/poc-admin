@@ -5,8 +5,10 @@
       <div class="question__top" >
         <p>উদ্দীপক...</p>
         <div class="img__cont">
-          <!-- <img src="/images/addQuestionImg.svg" alt=""> -->
-          <InputImgComp @input="handleImgInput" />
+          <img :src="previewImage ? previewImage : typeof questionTypeTwoMain.Q_image == 'string' ? imageUrl(questionTypeTwoMain.Q_image) : '/images/addQuestionImg.svg'" alt="">
+          <span>
+            <ImgInputModel v-model="questionTypeTwoMain.Q_image" @imagInput="handleIInput"/>
+          </span>
         </div>
       </div>
 
@@ -14,7 +16,7 @@
         <AdminCustomInput 
           :isTextArea="true"
           placeholder="উদ্দীপক..."
-          v-model="questionTypeTwo.paragraph"
+          v-model="questionTypeTwoMain.description"
           :style="{
             minHeight: '120px',
             resize: 'vertical'
@@ -26,19 +28,34 @@
     <div class="hints">
       <p class="hints__header">
         <!-- {{questionTypeTwo.hintsHeader}} -->
-        নিচের তথ্যগুলো লক্ষ করঃ
+        <!-- নিচের তথ্যগুলো লক্ষ করঃ -->
+          <!-- placeholder="প্রশ্ন..." -->
+
+        <span class="qH">প্রশ্ন...</span>
+        <span class="qHI">
+          <AdminCustomInput 
+          :isTextArea="true"
+          v-model="questionTypeTwoMain.question_name"
+          :style="{
+            border: 'none',
+            padding: '0px',
+            background: 'inherit',
+            minHeight: '40px',
+            resize: 'vertical'
+          }"
+        />
+        </span>
       </p>
       <div class="hints__option">
         <ul>
-          <li v-for="key in Object.keys(questionTypeTwo.hintsOption)" :key="key">
+          <li v-for="key of dataOptions" :key="key">
             <span>
-              {{key}}.
+              {{key == 'data_one' ? 'i' : key == 'data_two' ? 'ii' : key == 'data_three' ? 'iii' : key == 'data_four' ? 'iv' : ''}}.
             </span>
             <AdminCustomInput
-              v-model="questionTypeTwo.hintsOption[key]"
-              :placeholder="questionTypeTwo.hintsOption[key]"
+              v-model="questionTypeTwoMain[key]"
+              :placeholder="questionTypeTwoMain[key]"
               :isTextArea="true"
-
               :style="{
                 border: 'none',
                 padding: '0px',
@@ -54,40 +71,78 @@
     </div>
     
     <div class="option__cont">
-      <p>
+      <p class="mH">
         <!-- {{questionTypeTwo.optionsHeader}} -->
         নিচের কোনটি সঠিকঃ
       </p>
 
-      <div class="options">
+      <!-- <div class="options">
       <CustomRadioButton
-        v-for="option in questionTypeTwo.options"
+        v-for="option in questionTypeTwoMain.options"
         :key="option"
         :option="option"
         name='type1'
-        v-model="questionTypeTwo.correctAns"
+        v-model="questionTypeTwoMain.correctAns"
       />
+    </div> -->
+
+      <div class="options">
+
+      <div class="option" v-for="(option, index) in questionTypeTwoMain.options" :key="index">
+        <span class="radio">
+          <CustomRadioButton
+            :option="questionTypeTwoMain.options[index].ans"
+            :name="questionTypeTwoMain.uuid"
+            v-model="questionTypeTwoMain.selectedOption"
+            :isEditOption="true"
+          />
+        </span>
+        <span class='input__elm'>
+          <AdminCustomInput 
+            :placeholder="questionTypeTwoMain.options[index].ans"
+            v-model="questionTypeTwoMain.options[index].ans"
+            :style="{
+              border: 'none',
+              background: 'transparent',
+              padding: '0rem',
+              minHeight: '40px',
+              resize: 'vertical',
+              width: '100%'
+            }"
+            :isTextArea="true"
+          />
+        </span>
+
+      </div>
+
     </div>
+
+
+
+
     </div>
     
 
+    <!-- <QuestionCreateBtns v-if="!isFromTypeC" /> -->
+    <QuestionCreateBtns :isNewQ="questionTypeTwoMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
 
-
-    <QuestionCreateBtns v-if="!isFromTypeC" />
   </div>
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import CustomSelect from '../../ui/CustomSelect.vue';
 import AdminCustomInput from '../AdminCustomInput.vue';
 import CustomRadioButton from '../../ui/CustomRadioButton.vue';
 import CustomAdminBtn from '../../ui/CustomAdminBtn.vue';
 import QuestionCreateBtns from './QuestionCreateBtns.vue';
 import InputImgComp from '../../ui/InputImgComp.vue';
+import { useStore } from 'vuex';
+import { getNotification } from '../../../api/common';
+import ImgInputModel from '../../ui/ImgInputModel.vue';
 export default {
   name: "CreateQuestionTypeB",
-  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp },
+  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel },
   props: {
     questionTypeTwo: {
       type: Object,
@@ -100,12 +155,137 @@ export default {
   },
   setup(props) {
     console.log(props.questionTypeTwo);
-    
-    const handleImgInput = (img) => {
-      props.questionTypeOne.img = img
+    const store  = useStore();
+  
+    const questionTypeTwoMain = ref({
+      // uuid: uuidv4(), 
+      // exam_pack: examPack,     -> these three attribute will come from props always
+      // exam_name: examName,
+      Q_image: '',
+      type: 'Type 02',
+      description: "",
+      question_name: "",
+      data_one: "" ,
+      data_two: "" ,
+      data_three: "" ,
+      data_four: "" ,
+      selectedOption: '',
+      options: [
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          }
+      ],
+    })
+
+
+    questionTypeTwoMain.value = !props.questionTypeTwo.isNewQuestion 
+                                  ? {...props.questionTypeTwo} 
+                                  : {...questionTypeTwoMain.value, ...props.questionTypeTwo} 
+
+
+    const dataOptions = computed(() => {
+      
+      return [
+          'data_one',
+          'data_two',
+          'data_three',
+          'data_four'
+        ]
+      
+    })
+
+
+
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`);
+
+
+    const isValid = () => {
+      const isValid = ref(true);
+      if(!questionTypeTwoMain.value.question_name) {
+        store.dispatch('notifications/add', getNotification('warning', `Question name is empty`));
+        return false
+      } else if(!questionTypeTwoMain.value.data_one && !questionTypeTwoMain.value.data_two && !questionTypeTwoMain.value.data_three) {
+        store.dispatch('notifications/add', getNotification('warning', `Sample data cannot be empty`));
+        return false
+      } else if(!questionTypeTwoMain.value.selectedOption) {
+        store.dispatch('notifications/add', getNotification('warning', `You must select an answer`));
+        return false
+      } else if(!questionTypeTwoMain.value.selectedOption) {
+        store.dispatch('notifications/add', getNotification('warning', `You must select an answer`));
+        return false
+      } 
+
+      for(let option of questionTypeTwoMain.value.options) {
+        if(option.ans == '') {
+          isValid.value = false
+          store.dispatch('notifications/add', getNotification('warning', `Option cannot be empty`))
+          break; 
+        } else {
+          isValid.value = true;
+        }
+      }
+      return isValid.value;
     }
+
+
+
+
+    const handleSaveQuestion = () => {
+      console.log('save question')
+      if(isValid()) {
+        const mainOptions = questionTypeTwoMain.value.options.map((option) => {
+          return {
+            ...option,
+            Question: questionTypeTwoMain.value.question_name,
+            is_correct: option.ans == questionTypeTwoMain.value.selectedOption
+          }
+        })
+
+        ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'type1' )
+      }
+    }
+
+    const handleEditQuestion = () => {
+      console.log('edit an question')
+    }
+
+    const handleDeleteQuestion = () => {
+      console.log('delete quesiton', questionTypeTwoMain.value);
+    }
+
+    const previewImage = ref(null)
+    const handleIInput = (e) => {
+      console.log(e)
+      previewImage.value = e;
+    }
+
+
     return {
-      handleImgInput
+      handleSaveQuestion,
+      handleEditQuestion,
+      handleDeleteQuestion,
+      imageUrl,
+      questionTypeTwoMain,
+      handleIInput,
+      previewImage,
+      dataOptions
     }
   }
 }
@@ -128,6 +308,24 @@ export default {
     gap: 0.8rem;
     margin-top: 1rem;
     width: 100%;
+
+    .hints__header {
+      margin-bottom: 1rem;
+    }
+    .qH {
+      font-weight: 600;
+      color: #000000cf;
+      font-size: 1.13rem;
+      margin-bottom: 0.4rem;
+    }
+    .qHI {
+      border-bottom: 1px solid grey;
+      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+
+    }
 
     ul {
       list-style-type: none;
@@ -166,14 +364,48 @@ export default {
       align-items: center;
       font-size: 1.15rem;
       font-weight: 500;
+      p {
+        font-weight: 600;
+        color: #000000cf;
+        font-size: 1.13rem;
+        margin-bottom: 0.4rem;
+      }
     }
     .img__cont {
-      max-width: 20px;
-      max-height: 20px;
+      position: relative;
+      // background: #CFCFCF;
       cursor: pointer;
-      img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 20px;
+      height: 20px;
+      // height: 290px;
+      img{
         width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background-position: center center;
       }
+
+      span{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        top:0;
+        left: 0;
+        cursor: pointer;
+
+        input {
+          position: absolute;
+          /* top: 0; */
+          opacity: 0;
+          inset: 0;
+          width: 100%;
+          cursor: pointer;
+        }
+      }
+
     }
   }
   .options {
@@ -182,10 +414,32 @@ export default {
     flex-direction: column;
     justify-content: center;
     gap: 0.95rem;
+    margin-top:0.9rem;
+
+    .option {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      border-bottom: 1px solid grey;
+      
+      .radio{
+        flex-basis: 4%;
+      }
+      .input__elm {
+        flex-basis: 96%;
+      }
+    }
   }
   .option__cont{
     @extend .options;
-    margin: 1rem 0;
+    margin: 1.8rem 0;
+
+    .mH{
+      font-weight: 600;
+      color: #000000cf;
+      font-size: 1.13rem;
+      margin-bottom: 0.4rem;
+    }
   }
   
 

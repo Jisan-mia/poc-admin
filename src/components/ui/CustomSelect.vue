@@ -60,7 +60,7 @@ select {
   appearance: none;
   cursor: pointer;
   &:disabled{
-    cursor: none;
+    cursor: default;
     opacity: 0.83;
   }
 }

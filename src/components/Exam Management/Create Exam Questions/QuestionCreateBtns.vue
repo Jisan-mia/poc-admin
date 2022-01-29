@@ -6,8 +6,8 @@
     </button>
 
     <div class="wrapper">
-      <CustomAdminBtn type="info" :rounded="true" @click="$emit('onQuestionSave')">
-        Save
+      <CustomAdminBtn type="info" :rounded="true" @click="!isNewQ ? $emit('onQuestionEdit') : $emit('onQuestionSave')">
+        {{isNewQ ? 'Save' : 'Edit'}}
       </CustomAdminBtn>
     </div>
   </div>
@@ -17,7 +17,12 @@
 import CustomAdminBtn from "../../ui/CustomAdminBtn.vue";
 export default {
   name: "QuestionCreateBtns",
-  components: { CustomAdminBtn }
+  components: { CustomAdminBtn },
+  props: {
+    isNewQ: {
+      type: Boolean
+    }
+  }
 }
 </script>
 

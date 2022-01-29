@@ -2,6 +2,7 @@ import { getNotification, getDateDiff, shuffleArray } from "../../../api/common"
 import examPackApi from "../../../api/examPackApi";
 import reportingApi from "../../../api/reportingApi";
 import { examPackMutationTypes } from "./examPack.mutationTypes";
+import { v4 as uuidv4 } from 'uuid';
 
 
 const state = {
@@ -230,10 +231,9 @@ const actions = {
           if(key !== "data_three") {
             allQuestion.push({
               ...question_data[key][i],
-              type: key,
-              mark_per_question,
-              isNegativeMarking,
-              amount_per_mistake
+              type: key == 'data_one' ? 'Type 01' : key == 'data_two' ? 'Type 02' : '',
+              isNewQuestion: false,
+              uuid: uuidv4()
             })
           }
           
@@ -244,17 +244,23 @@ const actions = {
         
         const optionRes = await examPackApi.getQuestionOptions(question.question_name);
         const optionData = await optionRes.data;
-        let mainOptions = []
+        let mainOptions = [];
+        let rightAns = null;
         if(optionData) {
           //console.log(optionData)
           const mainOptionsData = optionData.map(o => {
             return {
               ...o,
-              qName: question.question_name
+              Question: question.question_name
             }
           })
+
+          rightAns = mainOptionsData.find(option => option.is_correct == true)
           
-          return {...question, options: mainOptionsData}
+
+          const questionWithOption = {...question, options: mainOptionsData, selectedOption: rightAns.ans }
+          
+          return questionWithOption
           // for(let optionKey in optionData) {
           //   if(optionData[optionKey].length) {
           //     mainOptions = [...optionData[optionKey]]
@@ -265,7 +271,7 @@ const actions = {
         //console.log({...question, options: mainOptions})
       }
 
-      const allQuestionWithOptions =await Promise.all(allQuestion.map(setQuestionOption))
+      const allQuestionWithOptions = await Promise.all(allQuestion.map(setQuestionOption))
       
 
       const finalQuestions = isRandomized ? shuffleArray(allQuestionWithOptions) : [...allQuestionWithOptions]

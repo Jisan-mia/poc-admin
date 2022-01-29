@@ -27,10 +27,18 @@
   </div>
 
   <div class="questionComp" v-if="selectedExamPack && selectedExam">
-    <CreateQuestionComp :examPack="+selectedExamPack" :examName="+selectedExam" />
+    <div class="load" v-if="qLoading">
+      <Spinner />
+    </div>
+
+    <div class="qList" v-if="!qLoading && examAllQuestions.length !== 0">
+      <div class="qItem" v-for="question in examAllQuestions" :key="question.uuid">
+        <CreateQuestionComp :examQuestion="question" :examPack="+selectedExamPack" :examName="+selectedExam" />
+      </div>
+    </div>
   </div>
 
-  <div class="wrapper"  v-if="selectedExamPack && selectedExam">
+  <div class="wrapper"  v-if="selectedExamPack && selectedExam && !qLoading">
     <CustomAdminBtn type="primary" icon="fas fa-plus" @onClick="handleAddAnotherQuestion" :rounded="true" >
        Add Question 
     </CustomAdminBtn>
@@ -46,13 +54,15 @@ import CreateQuestionComp from "./CreateQuestionComp.vue";
 import CustomAdminBtn from "../../ui/CustomAdminBtn.vue";
 import { useStore } from 'vuex';
 import { watch, watchEffect } from '@vue/runtime-core';
+import Spinner from "../../ui/Spinner.vue";
 export default {
   name: "CreateAllExamQuestion",
-  components: { CustomSelect, CreateQuestionComp, CustomAdminBtn },
+  components: { CustomSelect, CreateQuestionComp, CustomAdminBtn, Spinner },
   setup() {
     const store = useStore();
     const selectedExamPack = ref('')
-    const selectedExam = ref('')
+    const selectedExam = ref('');
+    const qLoading = ref(false);
     const selectStyle = {
       borderRadius: '10px', 
       fontSize: '1rem',
@@ -61,8 +71,10 @@ export default {
       border: 'none'
     }
 
-    // const examPackList = ref(['Elite Exam Pack1', 'Elite Exam Pack2', 'Elite Exam Pack3']);
-    // const examList = ref(['Physics 1st chapter', 'Physics 2nd chapter', 'Force Chapter']);
+    const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+
+
+
 
     const examPacks = computed(() => store.state.examPackState.examPacks);
     const examListD = computed(() => store.state.examPackState.examLists);
@@ -79,6 +91,31 @@ export default {
       }
     })
 
+    const loadAllQuestions = async () => {
+      try {
+        await store.dispatch('examPackState/loadExamQuestions', +selectedExam.value);
+        
+        setTimeout(() => {
+          qLoading.value = false
+        }, 1000)
+
+        console.log(examAllQuestions.value)
+
+      } catch(err) {
+        qLoading.value = false
+        console.log(err)
+      }
+    }
+
+    watchEffect(async () => {
+      if(selectedExamPack.value && selectedExam.value) {
+        console.log('ready to fetch questions');
+        qLoading.value = true
+
+        await loadAllQuestions();
+      }
+    })
+
     const handleAddAnotherQuestion = () => {
       console.log('create another question')
     }
@@ -88,7 +125,9 @@ export default {
       handleAddAnotherQuestion,
       examPacks,
       selectedExamPack,
-      selectedExam
+      selectedExam,
+      qLoading,
+      examAllQuestions
     };
   },
 }
@@ -119,6 +158,18 @@ export default {
   }
 
     
+}
+.load {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qList {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 .wrapper {
   margin: 2rem 0;

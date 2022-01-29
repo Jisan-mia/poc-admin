@@ -5,7 +5,7 @@
       <div class="question__top">
         <p>প্রশ্ন...</p>
         <div class="img__cont" v-if="!isFromTypeC">
-          <img :src="previewImage ? previewImage : '/images/addQuestionImg.svg' ? '/images/addQuestionImg.svg' : '/images/addQuestionImg.svg'" alt="">
+          <img :src="previewImage ? previewImage : typeof questionTypeOneMain.q_image == 'string' ? imageUrl(questionTypeOneMain.q_image) : '/images/addQuestionImg.svg'" alt="">
           <span>
             <ImgInputModel v-model="questionTypeOneMain.q_image" @imagInput="handleIInput"/>
           </span>
@@ -61,7 +61,7 @@
 
     </div>
 
-    <QuestionCreateBtns @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" v-if="!isFromTypeC" />
+    <QuestionCreateBtns :isNewQ="questionTypeOneMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
     
   </div>
 </template>
@@ -92,13 +92,47 @@ export default {
     }
   },
   setup(props, ctx) {
-    const store = useStore()
-    const questionTypeOneMain = ref({...props.questionTypeOne})
-    
-    
-    watch(questionTypeOneMain.value, () => {
-      console.log(questionTypeOneMain.value);
+    const store = useStore();
+    const questionTypeOneMain = ref({
+      // uuid: uuidv4(), 
+      // exam_pack: examPack,     -> these three attribute will come from props always
+      // exam_name: examName,
+      question_name: '',
+      q_image: '',
+      selectedOption: '',
+      options: [
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          }
+      ],
+
     })
+
+    questionTypeOneMain.value = !props.questionTypeOne.isNewQuestion 
+                                  ? {...props.questionTypeOne} 
+                                  : {...questionTypeOneMain.value, ...props.questionTypeOne} 
+    
+    
+    // watch(questionTypeOneMain.value, () => {
+    //   console.log(questionTypeOneMain.value);
+    // })
     
 
 
@@ -142,6 +176,10 @@ export default {
       }
     }
 
+    const handleEditQuestion = () => {
+      console.log('edit an question')
+    }
+
     const handleDeleteQuestion = () => {
       console.log('delete quesiton', questionTypeOneMain.value);
     }
@@ -160,7 +198,8 @@ export default {
       imageUrl,
       handleDeleteQuestion,
       handleSaveQuestion,
-      questionTypeOneMain
+      questionTypeOneMain,
+      handleEditQuestion
     }
   }
 }
@@ -190,6 +229,12 @@ export default {
       align-items: center;
       font-size: 1.15rem;
       font-weight: 500;
+      p{
+        font-weight: 600;
+        color: #000000cf;
+        font-size: 1.13rem;
+        margin-bottom: 0.4rem;
+      }
     }
     .img__cont {
       position: relative;

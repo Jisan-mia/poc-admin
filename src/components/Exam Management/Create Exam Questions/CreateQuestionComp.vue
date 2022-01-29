@@ -10,6 +10,7 @@
           <CustomSelect 
             :options="typeOptions"
             v-model="typeSelected"
+            :disabled="!examQuestion.isNewQuestion"
             :style="{
               borderRadius: '10px', 
               fontSize: '1rem',
@@ -45,13 +46,17 @@ export default {
     },
     examName: {
       type: Number
+    },
+    examQuestion : {
+      type: Object
     }
   },
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, CreateQuestionTypeA,CreateQuestionTypeB, CreateQuestionTypeC },
   setup(props) {
+    const examQuestionP = props.examQuestion;
 
     const typeOptions = ref(['Type 01', 'Type 02', 'Type 03']);
-    const typeSelected = ref('Type 01')
+    const typeSelected = ref(examQuestionP?.type || 'Type 01')
 
 
     const comp = ref('CreateQuestionTypeA')
@@ -72,6 +77,7 @@ export default {
       exam_name: examName,
       question_name: '',
       q_image: '',
+      type: 'Type 01',
       selectedOption: '',
       options: [
           {
@@ -103,22 +109,39 @@ export default {
     
 
     const questionTypeTwo = ref({
-      img: '',
-      correctAns: '',
-      type: "B",
-      paragraph: "",
-      hintsHeader: "নিচের তথ্যগুলো লক্ষ করিঃ",
-      hintsOption: {
-        i: "" ,
-        ii: "" ,
-        iii: "" ,
-      },         
-      optionsHeader: "নিচের কোনটি সঠিকঃ",
+      uuid: uuidv4(),
+      exam_pack: examPack,
+      exam_name: examName,
+      Q_image: '',
+      type: 'Type 02',
+      description: "",
+      question_name: "",
+      data_one: "" ,
+      data_two: "" ,
+      data_three: "" ,
+      data_four: "" ,
+      selectedOption: '',
       options: [
-          "i & ii",
-          "ii & iii",
-          "i & iii",
-          "i, ii, iii"
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          },
+          {
+            Question: '',
+            ans: '',
+            is_correct: false
+          }
       ],
     })
 
@@ -162,11 +185,11 @@ export default {
     const compProps = computed(() => {
       if(comp.value === 'CreateQuestionTypeA') {
         return {
-          questionTypeOne: questionTypeOne.value
+          questionTypeOne: examQuestionP
         }
       } else if (comp.value === 'CreateQuestionTypeB') {
         return {
-          questionTypeTwo: questionTypeTwo.value
+          questionTypeTwo: examQuestionP
         }
       } else if (comp.value === 'CreateQuestionTypeC') {
         return {
