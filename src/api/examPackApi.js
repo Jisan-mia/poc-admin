@@ -279,18 +279,15 @@ const createQuestionOneTwo = async (data, url) => {
     });
     // console.log(res)
     if(res.data.code != 200) {
-      throw Error('Error creating exam')
+      throw Error('Error creating question')
     }
     return res.data;
   } catch(error) {
     console.log(error)
-    return "Couldn't create exam"
+    return "Couldn't create question"
   }
 
 }
-
-
-
 
 const createQuestionOneTwoOption = async (data, url) => {
   const getFormData = object => Object.keys(object).reduce((formData, key) => {
@@ -312,15 +309,68 @@ const createQuestionOneTwoOption = async (data, url) => {
     });
     // console.log(res)
     if(res.data.code != 200) {
-      throw Error('Error creating exam')
+      throw Error('Error creating options')
     }
     return res.data;
   } catch(error) {
     console.log(error)
-    return "Couldn't create exam"
+    return "Couldn't create question options"
   }
 
 }
+
+
+const deleteQuestionOneTwo = async (urlWithParam) => {
+  try{
+    const res = await axios.delete(urlWithParam,
+    {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    }
+    );
+    console.log(res)
+    if(res.data.code !== 200) {
+      throw Error('Error deleting question')
+    }
+    return res.data
+  } catch (err) {
+    //console.log(err.message)
+    return 'error deleting question'
+  }
+}
+
+const editQuestionAndOption = async (data, url) => {
+  const getFormData = object => Object.keys(object).reduce((formData, key) => {
+    formData.append(key, object[key]);
+    return formData;
+  }, new FormData());
+  
+  try{
+    const res = await axios({
+      method: 'PUT',
+      url: url,
+      data: getFormData(data),
+      headers: {
+		    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+       }
+    });
+    console.log(res)
+    if(res.data.code != 200) {
+      throw Error('Error editing question or option')
+    }
+    return res.data;
+  } catch(error) {
+    console.log(error)
+    return "Couldn't edit question or option"
+  }
+}
+
+
+
+
+
 
 export default {
   getExamPackList,
@@ -336,6 +386,8 @@ export default {
   // question create
   createQuestionOneTwo,
   createQuestionOneTwoOption,
+  deleteQuestionOneTwo,
+  editQuestionAndOption
 
 
 

@@ -1,4 +1,4 @@
-import { getNotification, getDateDiff, shuffleArray } from "../../../api/common";
+import { getNotification, getDateDiff, arraysCompare } from "../../../api/common";
 import examPackApi from "../../../api/examPackApi";
 import reportingApi from "../../../api/reportingApi";
 import { examPackMutationTypes } from "./examPack.mutationTypes";
@@ -8,7 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 const state = {
   examPacks: [],
   examLists: [],
-  examQuestions: []
+  examQuestions: [],
+  savedExamQuestions: []
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
   },
   [examPackMutationTypes.SET_EXAM_QUESTIONS](state, payload) {
     state.examQuestions = payload
+  },
+  setSavedExamQuestions(state,payload) {
+    state.savedExamQuestions = payload
   }
 }
 
@@ -250,7 +254,7 @@ const actions = {
           const mainOptionsData = optionData.map(o => {
             return {
               ...o,
-              Question: question.question_name
+              // Question: question.question_name
             }
           })
 
@@ -273,7 +277,28 @@ const actions = {
       const allQuestionWithOptions = await Promise.all(allQuestion.map(setQuestionOption))
       
 
-      const finalQuestions = [...allQuestionWithOptions]
+      
+      // scratching
+      const operation = (list1, list2, isUnion = false) =>  list1.filter(
+            (set => a => isUnion === set.has(a.question_name && a.id))(new Set(list2.map(b => b.question_name && b.id)))
+        );
+
+      const inBoth = (list1, list2) => operation(list1, list2, true),
+        inFirstOnly = operation,
+        inSecondOnly = (list1, list2) => inFirstOnly(list2, list1);
+
+
+      let previousQuestions = context.state.examQuestions;
+
+      const theNewOne = inSecondOnly(previousQuestions, allQuestionWithOptions);
+      console.log(theNewOne)
+      if(theNewOne.length == 1) {
+        const filterQ = previousQuestions.filter(q => q.question_name !== theNewOne.question_name)
+        previousQuestions = [...filterQ]
+
+      }
+
+      const finalQuestions = [...previousQuestions, ...theNewOne]
 
       context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS, finalQuestions)
     } else {
@@ -317,6 +342,9 @@ const actions = {
       })
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
+    } else {
+      throw new Error('could not create question type one')
+
     }
 
   },
@@ -352,8 +380,118 @@ const actions = {
       })
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
+    } else {
+      throw new Error('could not create question type two')
     }
     
+  },
+
+
+  async deleteQuestionTypeOne(context, questionId) {
+    const res = await examPackApi.deleteQuestionOneTwo(`https://www.exam.poc.ac/api/delete_question_one/${questionId}`)
+    
+    const resCode = await res?.code
+    if(resCode == 200) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
+    } else {
+      context.dispatch('notifications/add', {type: 'error', message: 'Failed to Delete'} , {root: true})
+      throw new Error('could not delete question model one')
+
+    }
+  },
+
+  async deleteQuestionTypeTwo(context, questionId) {
+    const res = await examPackApi.deleteQuestionOneTwo(`https://www.exam.poc.ac/api/delete_question_two/${questionId}`)
+    
+    const resCode = await res?.code
+    if(resCode == 200) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
+    } else {
+      context.dispatch('notifications/add', {type: 'error', message: 'Failed to Delete'} , {root: true})
+      throw new Error('could not delete question model two')
+
+    }
+  },
+
+  async editQuestionTypeOne(context, question) {
+    const {id, exam_name, exam_pack, q_image, question_name} = question;
+    const allOptions = question.options
+
+
+    console.log(allOptions)
+
+    
+
+    const data = {
+      id,
+      exam_name, 
+      exam_pack, 
+      q_image, 
+      question_name
+    }
+    if(!data.q_image || typeof data.q_image == 'string') {
+      // console.log(mainProfile.q_image)
+      delete data.q_image
+    }
+    
+    const questionRes = await examPackApi.editQuestionAndOption(data, `https://www.exam.poc.ac/api/edit_question_one/${data.id}`);
+    const questionData = await questionRes.data;
+   
+
+    if(questionData) {
+      allOptions.forEach(async (option) => {
+        await examPackApi.editQuestionAndOption(option, `https://www.exam.poc.ac/api/edit_ans_model_one/${option.id}`)
+      })
+
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Edited'} , {root: true})
+
+    } else {
+      throw new Error('could not create question type two')
+    }
+    
+
+
+  },
+
+  async editQuestionTypeTwo(context, question) {
+    const {id, exam_name, exam_pack, question_name, data_one, data_two, data_three } = question;
+    
+    const allOptions = question.options
+    console.log(allOptions)
+    
+
+    const data = {
+      id,
+      exam_name, 
+      exam_pack, 
+      description: question.description,
+      Q_image: question.Q_image,
+      question_name,
+      data_one, 
+      data_two, 
+      data_three,
+      data_four: question.data_four
+    }
+    if(!data.Q_image || typeof data.Q_image == 'string') {
+      // console.log(mainProfile.q_image)
+      delete data.Q_image
+    }
+    
+    const questionRes = await examPackApi.editQuestionAndOption(data, `https://www.exam.poc.ac/api/edit_question_two/${data.id}`);
+    const questionData = await questionRes.data;
+    
+
+    if(questionData) {
+      allOptions.forEach(async (option) => {
+        await examPackApi.editQuestionAndOption(option, `https://www.exam.poc.ac/api/edit_ans_two/${option.id}`)
+      })
+
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Edited'} , {root: true})
+
+    } else {
+      throw new Error('could not create question type two')
+    }
+
   },
   
 

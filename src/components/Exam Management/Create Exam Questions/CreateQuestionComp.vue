@@ -203,16 +203,11 @@ export default {
       } 
     })
 
-    const setIsNewQuestion = (question) => { 
-      const updatedQs = examAllQuestions.value.map(q => q.uuid == question.uuid ? {...q, isNewQuestion: false} : q)
-
-      store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, updatedQs )
-    }
 
     const saveQ1 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeOne', question);
-        setIsNewQuestion(question)
+        await store.dispatch('examPackState/loadExamQuestions', examName);
 
       } catch(err) {
         console.log(err)
@@ -222,7 +217,8 @@ export default {
     const saveQ2 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeTwo', question);
-        setIsNewQuestion(question)
+        await store.dispatch('examPackState/loadExamQuestions', examName);
+
 
 
       } catch(err) {

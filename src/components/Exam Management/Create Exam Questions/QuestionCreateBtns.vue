@@ -20,7 +20,8 @@ export default {
   components: { CustomAdminBtn },
   props: {
     isNewQ: {
-      type: Boolean
+      type: Boolean,
+      default: () => true
     }
   }
 }

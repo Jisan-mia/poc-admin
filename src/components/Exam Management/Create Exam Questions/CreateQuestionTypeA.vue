@@ -64,7 +64,7 @@
 
     </div>
 
-    <QuestionCreateBtns :isNewQ="questionTypeOneMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
+    <QuestionCreateBtns :isNewQ="questionTypeOne.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
     
   </div>
 </template>
@@ -81,6 +81,7 @@ import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { watch, watchEffect } from '@vue/runtime-core';
 import { useStore } from 'vuex';
 import { getNotification } from '../../../api/common';
+import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 export default {
   name: "CreateQuestionTypeA",
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel },
@@ -96,10 +97,16 @@ export default {
   },
   setup(props, ctx) {
     const store = useStore();
+    // console.log(props.questionTypeOne);
+    const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+  
+
     const questionTypeOneMain = ref({
       // uuid: uuidv4(), 
       // exam_pack: examPack,     -> these three attribute will come from props always
       // exam_name: examName,
+      isNewQuestion: true,
+      uuid: '',
       question_name: '',
       q_image: '',
       selectedOption: '',
@@ -179,12 +186,52 @@ export default {
       }
     }
 
-    const handleEditQuestion = () => {
-      console.log('edit an question')
+    const handleEditQuestion = async () => {
+      if(isValid()) {
+        const mainOptions = questionTypeOneMain.value.options.map((option) => {
+          return {
+            ...option,
+            is_correct: option.ans == questionTypeOneMain.value.selectedOption
+          }
+        })
+
+        try {
+          await store.dispatch('examPackState/editQuestionTypeOne', {...questionTypeOneMain.value, options: mainOptions});
+        } catch(err) {
+          console.log(err)
+        }
+      }
+      
+    }
+
+    const updatedDeletedQ = (question) => {
+      const filteredQ = examAllQuestions.value.filter(q => q.uuid !== question.uuid)
+      store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, filteredQ )
+    }
+
+
+    const deleteQ1 = async (question) => {
+      try {
+        await store.dispatch('examPackState/deleteQuestionTypeOne', question.id);
+        updatedDeletedQ(question)
+
+      } catch(err) {
+        console.log(err)
+      }
     }
 
     const handleDeleteQuestion = () => {
-      console.log('delete quesiton', questionTypeOneMain.value);
+      console.log('delete question', );
+      // ctx.emit('onDeleteQuestion', questionTypeOneMain.value, 'Type 01')
+      if(questionTypeOneMain.value.isNewQuestion) {
+        // const filteredQ = examAllQuestions.value.filter(question => question.uuid !== questionTypeOneMain.value.uuid)
+        // store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, filteredQ )
+        updatedDeletedQ(questionTypeOneMain.value)
+
+
+      } else {
+        deleteQ1(questionTypeOneMain.value)
+      }
     }
 
     
