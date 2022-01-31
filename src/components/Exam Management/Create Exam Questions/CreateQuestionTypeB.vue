@@ -157,7 +157,7 @@ export default {
     }
   },
   setup(props, ctx) {
-    console.log(props.questionTypeTwo);
+    // console.log(props.questionTypeTwo);
     const store  = useStore();
   
     const questionTypeTwoMain = ref({

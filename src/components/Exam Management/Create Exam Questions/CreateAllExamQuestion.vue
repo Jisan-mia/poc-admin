@@ -97,6 +97,7 @@ export default {
     const loadAllQuestions = async () => {
       try {
         await store.dispatch('examPackState/loadExamQuestions', +selectedExam.value);
+        console.log(examAllQuestions.value)
         
         setTimeout(() => {
           qLoading.value = false

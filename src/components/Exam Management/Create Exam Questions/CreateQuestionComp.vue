@@ -38,6 +38,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { watchEffect } from '@vue/runtime-core';
 import { useStore } from 'vuex';
+import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 
 export default {
   name: "CreateQuestionComp",
@@ -56,6 +57,8 @@ export default {
   setup(props) {
     const store = useStore();
     const examQuestionP = props.examQuestion;
+    const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+
 
     const typeOptions = ref(['Type 01', 'Type 02', 'Type 03']);
     const typeSelected = ref(examQuestionP?.type || 'Type 01')
@@ -200,10 +203,16 @@ export default {
       } 
     })
 
+    const setIsNewQuestion = (question) => { 
+      const updatedQs = examAllQuestions.value.map(q => q.uuid == question.uuid ? {...q, isNewQuestion: false} : q)
+
+      store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, updatedQs )
+    }
+
     const saveQ1 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeOne', question);
-        await store.dispatch('examPackState/loadExamQuestions', examName);
+        setIsNewQuestion(question)
 
       } catch(err) {
         console.log(err)
@@ -213,7 +222,9 @@ export default {
     const saveQ2 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeTwo', question);
-        await store.dispatch('examPackState/loadExamQuestions', examName);
+        setIsNewQuestion(question)
+
+
       } catch(err) {
         console.log(err)
       }

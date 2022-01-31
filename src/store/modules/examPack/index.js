@@ -215,7 +215,7 @@ const actions = {
     
     const currentExam = examLists.find(exam => exam.id == id);
 
-    const {isRandomized, mark_per_question, amount_per_mistake, isNegativeMarking} = currentExam;
+    // const {isRandomized, mark_per_question, amount_per_mistake, isNegativeMarking} = currentExam;
     //console.log(isRandomized);
     
 
@@ -273,7 +273,7 @@ const actions = {
       const allQuestionWithOptions = await Promise.all(allQuestion.map(setQuestionOption))
       
 
-      const finalQuestions = isRandomized ? shuffleArray(allQuestionWithOptions) : [...allQuestionWithOptions]
+      const finalQuestions = [...allQuestionWithOptions]
 
       context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS, finalQuestions)
     } else {
@@ -315,10 +315,9 @@ const actions = {
       allMainOptions.forEach(async (option) => {
         await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
       })
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
     }
-
-    
 
   },
 
@@ -351,8 +350,7 @@ const actions = {
       allMainOptions.forEach(async (option) => {
         await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
       })
-      
-      
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
     }
     
