@@ -2,10 +2,13 @@
   <div class="question__inner">
 
     <div class="question">
+      <div class="show_image" v-if="questionTypeOneMain.q_image">
+          <img :src="previewImage ? previewImage : typeof questionTypeOneMain.q_image == 'string' && questionTypeOneMain.q_image ? imageUrl(questionTypeOneMain.q_image) : '/images/addQuestionImg.svg'" alt="">
+      </div>
       <div class="question__top">
         <p>প্রশ্ন...</p>
         <div class="img__cont" v-if="!isFromTypeC">
-          <img :src="previewImage ? previewImage : typeof questionTypeOneMain.q_image == 'string' ? imageUrl(questionTypeOneMain.q_image) : '/images/addQuestionImg.svg'" alt="">
+          <img src='/images/addQuestionImg.svg' alt="">
           <span>
             <ImgInputModel v-model="questionTypeOneMain.q_image" @imagInput="handleIInput"/>
           </span>
@@ -172,7 +175,7 @@ export default {
           }
         })
 
-        ctx.emit('onSaveQuestion',{...questionTypeOneMain.value, options: mainOptions}, 'type1' )
+        ctx.emit('onSaveQuestion',{...questionTypeOneMain.value, options: mainOptions}, 'Type 01' )
       }
     }
 
@@ -271,6 +274,29 @@ export default {
         }
       }
 
+    }
+
+    .show_image {
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 210px;
+      max-width: 400px;
+      overflow: hidden;
+      display: block;
+      align-self: center;
+      margin-bottom: 1.5rem;
+      @include maxMedia(768px) {
+        max-width: 100%;
+        height: 200px;
+      }
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-position: center center;
+        border-radius: 5px;
+      }
     }
   }
 

@@ -37,6 +37,7 @@ import CreateQuestionTypeC from './CreateQuestionTypeC.vue';
 import { v4 as uuidv4 } from 'uuid';
 
 import { watchEffect } from '@vue/runtime-core';
+import { useStore } from 'vuex';
 
 export default {
   name: "CreateQuestionComp",
@@ -53,6 +54,7 @@ export default {
   },
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, CreateQuestionTypeA,CreateQuestionTypeB, CreateQuestionTypeC },
   setup(props) {
+    const store = useStore();
     const examQuestionP = props.examQuestion;
 
     const typeOptions = ref(['Type 01', 'Type 02', 'Type 03']);
@@ -198,10 +200,34 @@ export default {
       } 
     })
 
+    const saveQ1 = async (question) => {
+      try{
+        await store.dispatch('examPackState/createQuestionTypeOne', question);
+        await store.dispatch('examPackState/loadExamQuestions', examName);
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
+    const saveQ2 = async (question) => {
+      try{
+        await store.dispatch('examPackState/createQuestionTypeTwo', question);
+        await store.dispatch('examPackState/loadExamQuestions', examName);
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
 
     const handleSaveQ = (question, type) => {
       console.log('save from main')
-      console.log(question, type)
+      console.log(question, type);
+      if(type == 'Type 01') {
+        saveQ1(question)
+      } else if(type == 'Type 02') {
+        saveQ2(question)
+      }
     }
     return {
       typeOptions,

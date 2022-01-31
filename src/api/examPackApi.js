@@ -210,13 +210,6 @@ const editExam = async (data) => {
 
 
 
-
-
-
-
-
-
-// not using below code
 const getExamQuestions = async (id) => {
   try{
     const res = await axios.get(`https://www.exam.poc.ac/api/get_question/${id}`,
@@ -266,6 +259,68 @@ const getQuestionOptions = async (questionName) => {
 }
 
 
+// question create related 
+const createQuestionOneTwo = async (data, url) => {
+  const getFormData = object => Object.keys(object).reduce((formData, key) => {
+    formData.append(key, object[key]);
+    return formData;
+  }, new FormData());
+
+  try{
+
+    const res = await axios({
+      method: 'POST',
+      url: url,
+      data: getFormData(data),
+      headers: {
+		    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+       }
+    });
+    console.log(res)
+    if(res.data.code != 200) {
+      throw Error('Error creating exam')
+    }
+    return res.data;
+  } catch(error) {
+    console.log(error)
+    return "Couldn't create exam"
+  }
+
+}
+
+
+
+
+const createQuestionOneTwoOption = async (data, url) => {
+  const getFormData = object => Object.keys(object).reduce((formData, key) => {
+    formData.append(key, object[key]);
+    return formData;
+  }, new FormData());
+
+
+  try{
+
+    const res = await axios({
+      method: 'POST',
+      url: url,
+      data: getFormData(data),
+      headers: {
+		    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+       }
+    });
+    console.log(res)
+    if(res.data.code != 200) {
+      throw Error('Error creating exam')
+    }
+    return res.data;
+  } catch(error) {
+    console.log(error)
+    return "Couldn't create exam"
+  }
+
+}
 
 export default {
   getExamPackList,
@@ -277,5 +332,13 @@ export default {
   deleteExam,
   createExam,
   getExamQuestions,
-  getQuestionOptions
+  getQuestionOptions,
+  // question create
+  createQuestionOneTwo,
+  createQuestionOneTwoOption,
+
+
+
+
+
 }

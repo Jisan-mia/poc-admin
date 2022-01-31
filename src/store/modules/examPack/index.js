@@ -220,7 +220,6 @@ const actions = {
     
 
     const res = await examPackApi.getExamQuestions(id);
-    //console.log(res);
     const question_data = await res.question_data;
 
     if(question_data) {
@@ -287,7 +286,77 @@ const actions = {
       throw new Error('could not exam lists')
     }
 
-  }
+  },
+
+
+  async createQuestionTypeOne(context, payload) {
+    const {exam_name, exam_pack, q_image, question_name} = payload;
+    const allOptions = payload.options
+
+    const data = {
+      exam_name, 
+      exam_pack, 
+      q_image, 
+      question_name
+    }
+
+  
+    const res = await examPackApi.createQuestionOneTwo(data, 'https://www.exam.poc.ac/api/create_q_one/');
+    const resData = await res.data;
+    if(resData) {
+      const qId = resData.id;
+      const allMainOptions = allOptions.map(option => {
+        return {
+          ...option,
+          Question: qId
+        }
+      })
+      
+      allMainOptions.forEach(async (option) => {
+        await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
+      })
+
+    }
+
+    
+
+  },
+
+  async createQuestionTypeTwo(context, payload) {
+    const data = {
+      exam_pack: payload?.exam_pack,
+      exam_name: payload?.exam_name,
+      description: payload?.description,
+      question_name: payload?.question_name,
+      Q_image: payload?.Q_image,
+      data_one: payload?.data_one,
+      data_two: payload?.data_two,
+      data_three: payload?.data_three,
+      data_four: payload?.data_four
+    }
+    const allOptions = payload.options
+
+
+    const res = await examPackApi.createQuestionOneTwo(data, 'https://www.exam.poc.ac/api/create_q_two/');
+    const resData = await res.data;
+    if(resData) {
+      const qId = resData.id;
+      const allMainOptions = allOptions.map(option => {
+        return {
+          ...option,
+          Question: qId
+        }
+      })
+      
+      allMainOptions.forEach(async (option) => {
+        await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
+      })
+      
+      
+
+    }
+    
+  },
   
 
 }

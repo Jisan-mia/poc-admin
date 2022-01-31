@@ -55,6 +55,9 @@ import CustomAdminBtn from "../../ui/CustomAdminBtn.vue";
 import { useStore } from 'vuex';
 import { watch, watchEffect } from '@vue/runtime-core';
 import Spinner from "../../ui/Spinner.vue";
+import { v4 as uuidv4 } from 'uuid';
+import { examPackMutationTypes } from "../../../store/modules/examPack/examPack.mutationTypes";
+
 export default {
   name: "CreateAllExamQuestion",
   components: { CustomSelect, CreateQuestionComp, CustomAdminBtn, Spinner },
@@ -99,8 +102,6 @@ export default {
           qLoading.value = false
         }, 1000)
 
-        console.log(examAllQuestions.value)
-
       } catch(err) {
         qLoading.value = false
         console.log(err)
@@ -117,7 +118,17 @@ export default {
     })
 
     const handleAddAnotherQuestion = () => {
-      console.log('create another question')
+      // console.log('create another question')
+      const withNewQ =[...examAllQuestions.value, {
+          uuid: uuidv4(), 
+          exam_pack: +selectedExamPack.value, 
+          exam_name: +selectedExam.value,
+          isNewQuestion: true
+        }]
+
+        store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, withNewQ )
+        
+
     }
     return {
       selectStyle,

@@ -2,10 +2,13 @@
   <div class="question__inner">
 
     <div class="question" v-if="!isFromTypeC">
+      <div class="show_image" v-if="questionTypeTwoMain.Q_image">
+          <img :src="previewImage ? previewImage : typeof questionTypeTwoMain.Q_image == 'string' && questionTypeTwoMain.Q_image ? imageUrl(questionTypeTwoMain.Q_image) : '/images/addQuestionImg.svg'" alt="">
+      </div>
       <div class="question__top" >
         <p>উদ্দীপক...</p>
         <div class="img__cont">
-          <img :src="previewImage ? previewImage : typeof questionTypeTwoMain.Q_image == 'string' ? imageUrl(questionTypeTwoMain.Q_image) : '/images/addQuestionImg.svg'" alt="">
+          <img src='/images/addQuestionImg.svg' alt="">
           <span>
             <ImgInputModel v-model="questionTypeTwoMain.Q_image" @imagInput="handleIInput"/>
           </span>
@@ -153,7 +156,7 @@ export default {
       default: () => false
     }
   },
-  setup(props) {
+  setup(props, ctx) {
     console.log(props.questionTypeTwo);
     const store  = useStore();
   
@@ -218,7 +221,10 @@ export default {
 
     const isValid = () => {
       const isValid = ref(true);
-      if(!questionTypeTwoMain.value.question_name) {
+      if(!questionTypeTwoMain.value.description && !questionTypeTwoMain.value.Q_image) {
+        store.dispatch('notifications/add', getNotification('warning', `Description of image cannot be empty`));
+        return false
+      } else if(!questionTypeTwoMain.value.question_name) {
         store.dispatch('notifications/add', getNotification('warning', `Question name is empty`));
         return false
       } else if(!questionTypeTwoMain.value.data_one && !questionTypeTwoMain.value.data_two && !questionTypeTwoMain.value.data_three) {
@@ -227,10 +233,7 @@ export default {
       } else if(!questionTypeTwoMain.value.selectedOption) {
         store.dispatch('notifications/add', getNotification('warning', `You must select an answer`));
         return false
-      } else if(!questionTypeTwoMain.value.selectedOption) {
-        store.dispatch('notifications/add', getNotification('warning', `You must select an answer`));
-        return false
-      } 
+      }
 
       for(let option of questionTypeTwoMain.value.options) {
         if(option.ans == '') {
@@ -258,7 +261,7 @@ export default {
           }
         })
 
-        ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'type1' )
+        ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'Type 02' )
       }
     }
 
@@ -406,6 +409,30 @@ export default {
         }
       }
 
+    }
+
+
+    .show_image {
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 210px;
+      max-width: 400px;
+      overflow: hidden;
+      display: block;
+      align-self: center;
+      margin-bottom: 1.5rem;
+      @include maxMedia(768px) {
+        max-width: 100%;
+        height: 200px;
+      }
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-position: center center;
+        border-radius: 5px;
+      }
     }
   }
   .options {
