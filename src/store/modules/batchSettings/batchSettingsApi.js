@@ -1,4 +1,3 @@
-import { getAuthorizationHeader } from "./common";
 import axios from 'axios'
 
 const getBatchSettings = async () => {
@@ -49,7 +48,29 @@ const addBatchSettings = async (data) => {
 }
 
 
+const deleteBatchSettings = async (id) => {
+  try{
+    const res = await axios.delete(`https://www.exam.poc.ac/api/delete_batch/${id}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    }
+    );
+    //console.log(res)
+    if(res.data.status !== 202) {
+      throw Error('Could not get batch settings')
+    }
+    return res.data;
+  } catch (err) {
+    // console.log(err.message)
+    return 'Error deleting batch settings'
+  }
+}
+
+
 export default {
   getBatchSettings,
-  addBatchSettings
+  addBatchSettings,
+  deleteBatchSettings
 }
