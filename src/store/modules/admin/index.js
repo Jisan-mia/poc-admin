@@ -77,11 +77,30 @@ const actions = {
 
   async loadStudentList(context) {
     const res = await adminApi.getAllStudentList();
-    // console.log(res)
+    const adminStuRes = await adminApi.getAdminStudent();
 
-    const data = await res.data
-    if(data) {
-      context.commit('setAllStudent', data)
+    const data = await res?.data
+    const adminStuData = await adminStuRes?.data
+    if(data && adminStuData) {
+
+      if(data.length !== 0 && adminStuData.length !== 0) {
+        const adminStuIds = adminStuData.map(stu => stu.user)
+
+        const allMainStu = data.map(student => {
+          if(adminStuIds.indexOf(student.user) != -1) {
+            const findAdminStu = adminStuData.find(stu => stu.user == student.user);
+            return {
+              ...student,
+              is_block: findAdminStu.is_block,
+              phone_number: findAdminStu.phone_number
+            }
+          } else {
+            return false
+          }
+        }).filter(Boolean)
+
+        context.commit('setAllStudent', allMainStu)
+      }
 
     } else {
       const notification = {
@@ -95,13 +114,22 @@ const actions = {
   },
   
 
-  async blockAStudent(context, phone_number) {
-    const res = await adminApi.blockStudent(phone_number);
+  async blockAStudent(context, student) {
+    const data = {
+      phone_number: student.phone_number,
+      block_status: student.is_block == true ? 'True' : 'False'
+    }
+
+    const res = await adminApi.blockStudent(data);
     // console.log(res)
 
-    const data = await res.data
-    if(data) {
-      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Blocked'} , {root: true})
+    const message = await res.message
+    if(message) {
+      if(student.is_block) {
+        context.dispatch('notifications/add', {type: 'success', message: 'Successfully Blocked'} , {root: true})
+      } else {
+        context.dispatch('notifications/add', {type: 'success', message: 'Successfully UnBlocked'} , {root: true})
+      }
 
     } else {
       const notification = {
@@ -117,8 +145,9 @@ const actions = {
     const res = await adminApi.deleteStudent(payload);
     // console.log(res)
 
-    const data = await res.data
-    if(data) {
+    const data = await res.code;
+    if(data == 200) {
+      context.dispatch('loadStudentList')
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
     } else {
       const notification = {

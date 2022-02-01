@@ -37,6 +37,22 @@ const getAllStudentList = async () => {
   }
 }
 
+// 
+const getAdminStudent = async () => {
+  try{
+    const res = await axios.get(`https://www.exam.poc.ac/api/admin_student_info/`)
+
+    if(res.data.code != 200) {
+      throw Error('Error getting admin student')
+    }
+    return res.data;
+  } catch(error) {
+    console.log(error)
+    return "Couldn't get admin student list"
+  }
+}
+
+
 // delete an student from the whole system 
 const deleteStudent = async (phone) => {
   try{
@@ -69,12 +85,9 @@ const blockStudent = async (data) => {
       headers: {
 		    'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
-       }
+       } 
     });
 
-    if(res?.data?.code != 200) {
-      throw Error('Error blocking student')
-    }
     return res.data;
   } catch(error) {
     console.log(error)
@@ -120,7 +133,9 @@ const updateUserProfile = async (data) => {
 export default {
   handleUserLogin,
   getAllStudentList,
+  getAdminStudent,
   updateUserProfile,
   deleteStudent,
-  blockStudent
+  blockStudent,
+
 }

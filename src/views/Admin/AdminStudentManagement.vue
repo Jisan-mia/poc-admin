@@ -1,8 +1,8 @@
 <template>
   <header class="header">
     <div class="header__input">
-      <input  type="number" placeholder="Search With Phone Number" name="" id="">
-      <input v-model="phoneSearch" type="text" name="" id="" placeholder="Search With Name">
+      <input v-model="nameSearch"   type="text" placeholder="Search With Phone Number">
+      <input v-model="phoneSearch" type="text"  placeholder="Search With Name">
       
       <select name="" id="" placeholder="Filter with Board" v-model="boardSelected">
         <option selected disabled value="">Filter by Board</option>
@@ -61,7 +61,7 @@
         <td> 
           <router-link :to="{name: 'SpecificStudent', params: {studentId: student.user}}">
             <span class="phone">
-              01301822644
+              {{student.phone_number}}
             </span>
           </router-link>
         </td>
@@ -89,13 +89,13 @@
         </td>
 
         <td>
-          <span>
-            <BlockingSwitch v-model="isActive" />
+          <span @click="handleUserBlock(student)">
+            <BlockingSwitch v-model="student.is_block" />
           </span>
         </td>
         <td>
-          <span>
-            <i @click="handleDeleteStudent(student)" class="far fa-trash-alt"></i>
+          <span @click="handleDeleteStudent(student)">
+            <i class="far fa-trash-alt"></i>
           </span>
         </td>
       </tr>
@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { computed, ref } from '@vue/runtime-core';
+import { computed, ref, watch } from '@vue/runtime-core';
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex';
 import BlockingSwitch from '../../components/ui/BlockingSwitch.vue';
@@ -118,14 +118,21 @@ export default {
         const isActive = ref(true);
         const boardSelected = ref("");
         const phoneSearch = ref("");
+        const nameSearch = ref("")
         const allStudentListD = computed(() => store.state.adminState.studentList);
         console.log(allStudentListD.value);
         // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
         const imageUrl = computed(() => (img) => img.includes("https://www.exam.poc.ac") || img.includes("http://www.exam.poc.ac") ? img : `https://www.exam.poc.ac${img}`);
+        
         const allStudentList = computed(() => {
-            if (phoneSearch.value || boardSelected.value) {
+            if (phoneSearch.value || boardSelected.value || nameSearch.value) {
                 let allStudentMain = ref(allStudentListD.value);
                 // console.log(allStudentMain.value)
+                if(nameSearch.value) {
+                  allStudentMain.value = allStudentMain.value.filter(student => {
+                        return nameSearch.value.toLowerCase().split(" ").every(v => student.phone_number.toLowerCase().includes(v));
+                    });
+                }
                 if (phoneSearch.value) {
                     allStudentMain.value = allStudentMain.value.filter(student => {
                         return phoneSearch.value.toLowerCase().split(" ").every(v => student.name.toLowerCase().includes(v));
@@ -144,16 +151,38 @@ export default {
                 return allStudentListD.value;
             }
         });
-        const handleDeleteStudent = (student) => {
+
+
+        const handleDeleteStudent = async (student) => {
             // console.log(student)
+            try {
+              await store.dispatch('adminState/deleteAStudent', student.phone_number)
+            } catch(err) {
+              console.log(err)
+            }
         };
+
+        // watch(a,() => {
+
+        // })
+
+        const handleUserBlock = async (student) => {
+          try {
+            await store.dispatch('adminState/blockAStudent', student)
+          } catch(err) {
+            console.log(err)
+          }
+        }
+
+
         return {
             allStudentList,
             imageUrl,
             boardSelected,
             phoneSearch,
+            nameSearch,
             handleDeleteStudent,
-            isActive
+            isActive,handleUserBlock
         };
     },
     components: { BlockingSwitch }

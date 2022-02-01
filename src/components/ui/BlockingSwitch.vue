@@ -1,6 +1,6 @@
 <template>
   <div class="toggle__container" @click="onToggleSwitch"  >
-    <div :class="['wrapper', modelValue ? 'on' : 'off', disabled ? 'disable': '' ]">
+    <div :class="['wrapper', modelValue ? 'off' : 'on', disabled ? 'disable': '' ]">
       <div class="circle">
       </div>
     </div>
