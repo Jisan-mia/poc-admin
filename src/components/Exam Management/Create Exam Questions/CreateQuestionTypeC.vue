@@ -32,7 +32,6 @@
     </div>
     
     <div class="questions" v-for="(examQuestion, index) in questionTypeThreeMain.otherQuestions" :key="index">
-      {{JSON.stringify(examQuestion)}}
       <CreateQuestionTypeA 
         v-if="examQuestion.type == 'Type 01'" 
         :questionTypeOne="examQuestion" 
