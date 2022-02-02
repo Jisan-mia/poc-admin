@@ -99,6 +99,7 @@ export default {
       try {
         await store.dispatch('batchSettings/addItemToBatchSettings', data)
         await store.dispatch('batchSettings/loadBatchSettings')
+        optionInput.value = ''
 
       } catch (err) {
         console.log(err)

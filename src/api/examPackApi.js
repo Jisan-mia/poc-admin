@@ -356,7 +356,7 @@ const editQuestionAndOption = async (data, url) => {
         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
        }
     });
-    console.log(res)
+    // console.log(res)
     if(res.data.code != 200) {
       throw Error('Error editing question or option')
     }

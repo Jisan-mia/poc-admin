@@ -127,7 +127,7 @@
     
 
     <!-- <QuestionCreateBtns v-if="!isFromTypeC" /> -->
-    <QuestionCreateBtns :isNewQ="questionTypeTwoMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
+    <QuestionCreateBtns v-if="!isFromTypeC" :isNewQ="questionTypeTwoMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
 
   </div>
 </template>
@@ -158,7 +158,7 @@ export default {
     }
   },
   setup(props, ctx) {
-    // console.log(props.questionTypeTwo);
+    console.log(props.questionTypeTwo);
     const store  = useStore();
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
 
@@ -209,13 +209,21 @@ export default {
 
 
     const dataOptions = computed(() => {
-      
-      return [
+      if(props.isFromTypeC) {
+        return [
           'data_one',
           'data_two',
           'data_three',
-          'data_four'
         ]
+      }
+      return [
+        'data_one',
+        'data_two',
+        'data_three',
+        'data_four'
+      ]
+      
+     
       
     })
 
@@ -266,6 +274,15 @@ export default {
           }
         })
 
+       const findCorrectAns = mainOptions.find(o => o.is_correct)
+        console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return
+        }
+
+
         ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'Type 02' )
       }
     }
@@ -279,8 +296,19 @@ export default {
           }
         })
 
+        const findCorrectAns = mainOptions.find(o => o.is_correct)
+        console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return
+        }
+
+
         try {
           await store.dispatch('examPackState/editQuestionTypeTwo', {...questionTypeTwoMain.value, options: mainOptions});
+          await store.dispatch('examPackState/loadExamQuestions', questionTypeTwoMain.value.exam_name);
+
         } catch(err) {
           console.log(err)
         }

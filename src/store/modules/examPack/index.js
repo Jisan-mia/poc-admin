@@ -217,7 +217,7 @@ const actions = {
   async loadExamQuestions(context, id) {
     const examLists = context.state.examLists;
     
-    const currentExam = examLists.find(exam => exam.id == id);
+    // const currentExam = examLists.find(exam => exam.id == id);
 
     // const {isRandomized, mark_per_question, amount_per_mistake, isNegativeMarking} = currentExam;
     //console.log(isRandomized);
@@ -228,6 +228,105 @@ const actions = {
 
     if(question_data) {
       const allQuestion = [];
+      const allQuestionThree = [];
+
+
+      const setUpQuestionThree = (question) => {
+        const {id, q_description, q_image, exam_pack, exam_name} = question;
+        const mainThreeQuestion = {
+          id,
+          uuid: uuidv4(),
+          isNewQuestion: false,
+          type: 'Type 03',
+          q_description,
+          q_image,
+          exam_pack,
+          exam_name,
+          otherQuestions: [
+            {
+              uuid: uuidv4(),
+              type: 'Type 01',
+              question_name: question.question_name,
+              exam_pack,
+              exam_name,
+              selectedOption: '',
+              isNewQuestion: false,
+              options: [
+                {
+                  Question: question.question_name,
+                  ans: question.question_one_ans_one,
+                  is_correct: question.question_one_ans_one_is_correct
+                },
+                {
+                  Question: question.question_name,
+                  ans: question.question_one_ans_two,
+                  is_correct: question.question_one_ans_two_is_correct
+                },
+                {
+                  Question: question.question_name,
+                  ans: question.question_one_ans_three,
+                  is_correct: question.question_one_ans_three_is_correct
+                },
+                {
+                  Question: question.question_name,
+                  ans: question.question_one_ans_four,
+                  is_correct: question.question_one_ans_four_is_correct
+                }
+              ]
+            },
+            {
+              uuid: uuidv4(),
+              type: 'Type 02',
+              question_name: question.question_name_two,
+              exam_pack,
+              exam_name,
+              selectedOption: '',
+              data_one: question.sample_one,
+              data_two: question.sample_two ,
+              data_three: question.sample_three,
+              isNewQuestion: false,
+              options: [
+                {
+                  Question: question.question_name_two,
+                  ans: question.question_two_ans_one,
+                  is_correct: question.question_two_ans_one_is_correct
+                },
+                {
+                  Question: question.question_name_two,
+                  ans: question.question_two_ans_two,
+                  is_correct: question.question_two_ans_two_is_correct
+                },
+                {
+                  Question: question.question_name_two,
+                  ans: question.question_two_ans_three,
+                  is_correct: question.question_two_ans_three_is_correct
+                },
+                {
+                  Question: question.question_name_two,
+                  ans: question.question_two_ans_four,
+                  is_correct: question.question_two_ans_four_is_correct
+                }
+              ]
+            }
+          ]
+
+        }
+        
+        const questionSelectedAns = mainThreeQuestion.otherQuestions.map((q) => {
+          const rightAns = q.options.find(option => option.is_correct == true);
+          return {
+            ...q,
+            selectedOption: rightAns.ans
+          }
+        })
+
+        const mainQuestionThree = {
+          ...mainThreeQuestion,
+          otherQuestions: questionSelectedAns
+        }
+
+        allQuestionThree.push(mainQuestionThree);
+      }
 
       for(let key in question_data) {
         for(let i in question_data[key]) {
@@ -238,10 +337,15 @@ const actions = {
               isNewQuestion: false,
               uuid: uuidv4()
             })
+          } else {
+            // 
+            setUpQuestionThree(question_data[key][i])
           }
           
         }
       }
+
+      
 
       const setQuestionOption = async (question) => {
         
@@ -278,29 +382,27 @@ const actions = {
       
 
       
-      // scratching
-      const operation = (list1, list2, isUnion = false) =>  list1.filter(
-            (set => a => isUnion === set.has(a.question_name && a.id))(new Set(list2.map(b => b.question_name && b.id)))
-        );
+      // let previousQuestions = context.state.examQuestions;
+      // console.log(previousQuestions, allQuestionWithOptions)
+      // const qNames = previousQuestions.map(q => q.question_name)
+      // const theNewOne = allQuestionWithOptions.find(q => {
+      //   if(qNames.indexOf(q.question_name) !== -1) {
+      //     return q
+      //   }
+      // })
 
-      const inBoth = (list1, list2) => operation(list1, list2, true),
-        inFirstOnly = operation,
-        inSecondOnly = (list1, list2) => inFirstOnly(list2, list1);
+      // console.log(theNewOne)
+      // if(theNewOne?.question_name) {
+      //   const filterQ = previousQuestions.filter(q => q.question_name !== theNewOne.question_name)
+      //   previousQuestions = [...filterQ, theNewOne]
 
+      // } else {
+      //   previousQuestions = [...allQuestionWithOptions]
+      // }
 
-      let previousQuestions = context.state.examQuestions;
+      // const finalQuestions = [...previousQuestions]
 
-      const theNewOne = inSecondOnly(previousQuestions, allQuestionWithOptions);
-      console.log(theNewOne)
-      if(theNewOne.length == 1) {
-        const filterQ = previousQuestions.filter(q => q.question_name !== theNewOne.question_name)
-        previousQuestions = [...filterQ]
-
-      }
-
-      const finalQuestions = [...previousQuestions, ...theNewOne]
-
-      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS, finalQuestions)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS, [...allQuestionWithOptions, ...allQuestionThree])
     } else {
       const notification = {
         type: 'error',

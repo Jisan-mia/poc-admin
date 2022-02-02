@@ -64,7 +64,7 @@
 
     </div>
 
-    <QuestionCreateBtns :isNewQ="questionTypeOne.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion" v-if="!isFromTypeC" />
+    <QuestionCreateBtns v-if="!isFromTypeC" :isNewQ="questionTypeOne.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
     
   </div>
 </template>
@@ -97,7 +97,7 @@ export default {
   },
   setup(props, ctx) {
     const store = useStore();
-    // console.log(props.questionTypeOne);
+    console.log(props.questionTypeOne);
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
   
 
@@ -182,6 +182,14 @@ export default {
           }
         })
 
+        const findCorrectAns = mainOptions.find(o => o.is_correct)
+        // console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return
+        }
+
         ctx.emit('onSaveQuestion',{...questionTypeOneMain.value, options: mainOptions}, 'Type 01' )
       }
     }
@@ -195,8 +203,18 @@ export default {
           }
         })
 
+        const findCorrectAns = mainOptions.find(o => o.is_correct)
+        // console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return
+        }
+
         try {
           await store.dispatch('examPackState/editQuestionTypeOne', {...questionTypeOneMain.value, options: mainOptions});
+          await store.dispatch('examPackState/loadExamQuestions', questionTypeOneMain.value.exam_name);
+
         } catch(err) {
           console.log(err)
         }

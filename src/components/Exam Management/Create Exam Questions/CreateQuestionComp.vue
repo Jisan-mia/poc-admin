@@ -198,7 +198,7 @@ export default {
         }
       } else if (comp.value === 'CreateQuestionTypeC') {
         return {
-          questionTypeThree: questionTypeThree.value
+          questionTypeThree: examQuestionP
         }
       } 
     })
@@ -207,6 +207,10 @@ export default {
     const saveQ1 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeOne', question);
+        // const upd = computed(() => examAllQuestions.value.map(q => q.uuid == question.uuid ? {...q, ...question, isNewQuestion: false} : q))
+        // store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, upd.value )
+
+
         await store.dispatch('examPackState/loadExamQuestions', examName);
 
       } catch(err) {
@@ -225,6 +229,9 @@ export default {
         console.log(err)
       }
     }
+    const saveQ3 = () => {
+      
+    }
 
 
     const handleSaveQ = (question, type) => {
@@ -234,6 +241,8 @@ export default {
         saveQ1(question)
       } else if(type == 'Type 02') {
         saveQ2(question)
+      } else {
+        saveQ3()
       }
     }
     return {

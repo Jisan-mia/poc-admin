@@ -128,7 +128,6 @@ export default {
         }]
 
         store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, withNewQ )
-        
 
     }
     return {
