@@ -31,8 +31,8 @@
       </div>
     </div>
     
-    <div class="questions" v-for="(examQuestion, index) in questionTypeThree.otherQuestions" :key="index">
-
+    <div class="questions" v-for="(examQuestion, index) in questionTypeThreeMain.otherQuestions" :key="index">
+      {{JSON.stringify(examQuestion)}}
       <CreateQuestionTypeA 
         v-if="examQuestion.type == 'Type 01'" 
         :questionTypeOne="examQuestion" 
@@ -96,18 +96,11 @@ export default {
         ]
     })
 
-    console.log(props.questionTypeThree)
 
-    questionTypeThreeMain.value = computed(() => {
-      if(props.questionTypeThree.isNewQuestion) {
-        console.log('yest')
-        return {...props.questionTypeThree, ...questionTypeThreeMain.value} 
-      } else {
-        return {...props.questionTypeThree}
-      }
-    })
-
-    console.log(props.questionTypeThree)
+    questionTypeThreeMain.value = !props.questionTypeThree.isNewQuestion 
+                                  ? {...props.questionTypeThree} 
+                                  : {...questionTypeThreeMain.value, ...props.questionTypeThree} 
+  
 
 
     const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`);
