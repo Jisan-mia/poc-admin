@@ -195,8 +195,10 @@ export default {
 
     // create an exam
     const handleCreateExam = () => {
-      store.commit('examPackState/setIsCreateExamFromPack', true)
-      router.push('/exam-management')
+      if(isValid()) {
+        store.commit('examPackState/setIsCreateExamFromPack', true)
+        router.push('/exam-management')
+      }
     }
 
 
