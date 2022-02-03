@@ -7,14 +7,17 @@
       <select name="" id="" placeholder="Filter with Board" v-model="boardSelected">
         <option selected disabled value="">Filter by Board</option>
         <option value="all">All Board</option>
-        <option value="dhaka">Dhaka</option>
+        <!-- <option value="dhaka">Dhaka</option>
         <option value="chittagong">Chittagong</option>
         <option value="sylhet">Sylhet</option>
         <option value="comilla">Comilla</option>
         <option value="mymensingh">Mymensingh</option>
         <option value="rajshahi">Rajshahi</option>
         <option value="rangpur">Rangpur</option>
-        <option value="barisal">Barisal</option>
+        <option value="barisal">Barisal</option> -->
+        <option v-for="board in boardOptions" :key="board.id" :value="board.board">
+          {{board.board}}
+        </option>
       </select>
 
     </div>
@@ -120,6 +123,8 @@ export default {
         const phoneSearch = ref("");
         const nameSearch = ref("")
         const allStudentListD = computed(() => store.state.adminState.studentList);
+        const boardOptions = computed(() => store.state.batchSettings.boardOptions);
+
         console.log(allStudentListD.value);
         // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
         const imageUrl = computed(() => (img) => img.includes("https://www.exam.poc.ac") || img.includes("http://www.exam.poc.ac") ? img : `https://www.exam.poc.ac${img}`);
@@ -182,7 +187,8 @@ export default {
             phoneSearch,
             nameSearch,
             handleDeleteStudent,
-            isActive,handleUserBlock
+            isActive,handleUserBlock,
+            boardOptions
         };
     },
     components: { BlockingSwitch }

@@ -6,9 +6,12 @@
       <select name="level" id="level" v-model="selectedLevel">
         <option selected disabled value="">Level</option>
         <option value="all">All Level</option>
-        <option value="HSC">HSC</option>
+        <!-- <option value="HSC">HSC</option>
         <option value="SSC">SSC</option>
-        <option value="O-level">O-Level</option>
+        <option value="O-level">O-Level</option> -->
+        <option v-for="level in levelOptions" :key="level.id" :value="level.level">
+          {{level.level}}
+        </option>
       </select>
     </div>
   </header>
@@ -102,7 +105,9 @@ export default {
     const store = useStore();
     const selectedLevel = ref('');
     const idSearch = ref('')
-    const reportsD = computed(() => store.state.reportingState.reportings)
+    const reportsD = computed(() => store.state.reportingState.reportings);
+    const levelOptions = computed(() => store.state.batchSettings.levelOptions);
+
 
     const reports = computed(() => {
       if(idSearch.value || selectedLevel.value) {
@@ -162,7 +167,8 @@ export default {
       idSearch,
       selectedLevel,
       cutHash,
-      handleSpecificReportShow
+      handleSpecificReportShow,
+      levelOptions
     }
   }
 }
