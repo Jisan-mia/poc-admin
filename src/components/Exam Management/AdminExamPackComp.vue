@@ -19,11 +19,14 @@
             <label>Level</label>
             <select name="level" id="level" v-model="examPack.level" >
               <option selected disabled value="">Select Label</option>
-              <option value="JSC">JSC</option>
+              <!-- <option value="JSC">JSC</option>
               <option value="SSC">SSC</option>
               <option value="HSC">HSC</option>
               <option value="O-Label">O-Label</option>   
-              <option value="A-Label">A-Label</option>
+              <option value="A-Label">A-Label</option> -->
+              <option v-for="level in levelOptions" :key="level.id" :value="level.level">
+                {{level.level}}
+              </option>
             </select>
           </div>
           
@@ -31,9 +34,12 @@
             <label>Batch</label>
              <select name="batch" id="batch" v-model="examPack.batch" aria-placeholder="Select Batch">
               <option selected disabled value="">Select Batch</option>
-              <option value="2023">2023</option>
+              <!-- <option value="2023">2023</option>
               <option value="2022">2022</option>
-              <option value="2021">2021</option>
+              <option value="2021">2021</option> -->
+              <option v-for="batch in batchOptions" :key="batch.id" :value="batch.batch">
+                {{batch.batch}}
+              </option>
             </select>
           </div>
         </div>
@@ -102,6 +108,8 @@ export default {
   setup(props, ctx) {
     const store = useStore();
     const router = useRouter();
+    const batchOptions = computed(() => store.state.batchSettings.batchOptions);
+    const levelOptions = computed(() => store.state.batchSettings.levelOptions);
     // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
     const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
 
@@ -220,7 +228,9 @@ export default {
       handleAddExamPack,
       imageUrl,
       previewImage,
-      handleIInput
+      handleIInput,
+      batchOptions,
+      levelOptions
     };
   },
   components: { AdminCustomInput, CustomAdminBtn, ImgInputModel }

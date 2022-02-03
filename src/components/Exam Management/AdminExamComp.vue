@@ -41,11 +41,14 @@
               <label>Level</label>
               <select name="label" id="label" v-model="examInfo.level" >
                 <option selected disabled value="">Select Label</option>
-                <option value="JSC">JSC</option>
+                <!-- <option value="JSC">JSC</option>
                 <option value="SSC">SSC</option>
                 <option value="HSC">HSC</option>
                 <option value="O-Label">O-Label</option>   
-                <option value="A-Label">A-Label</option>
+                <option value="A-Label">A-Label</option> -->
+                <option v-for="level in levelOptions" :key="level.id" :value="level.level">
+                  {{level.level}}
+                </option>
               </select>
             </div>
             
@@ -53,9 +56,12 @@
               <label>Batch</label>
               <select name="batch" id="batch" v-model="examInfo.batch">
                 <option selected disabled value="">Select Batch</option>
-                <option value="2023">2023</option>
+                <!-- <option value="2023">2023</option>
                 <option value="2022">2022</option>
-                <option value="2021">2021</option>
+                <option value="2021">2021</option> -->
+                <option v-for="batch in batchOptions" :key="batch.id" :value="batch.batch">
+                  {{batch.batch}}
+                </option>
               </select>
             </div>
 
@@ -188,6 +194,8 @@ export default {
   setup(props, context) {
     const store = useStore();
     const examPacks = computed(() => store.state.examPackState.examPacks);
+    const batchOptions = computed(() => store.state.batchSettings.batchOptions);
+    const levelOptions = computed(() => store.state.batchSettings.levelOptions);
     
     const examInfo = ref({
       cover_photo: '',
@@ -330,7 +338,9 @@ export default {
       previewImage,
       handleIInput,
       imageUrl,
-      examPacks
+      examPacks,
+      batchOptions,
+      levelOptions
     };
   },
   components: { AdminCustomInput, CustomAdminBtn, ToggleSwitch, ImgInputModel }
