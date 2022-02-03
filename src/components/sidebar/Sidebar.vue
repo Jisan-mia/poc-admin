@@ -1,7 +1,7 @@
 <script>
 import SidebarLink from './SidebarLink'
 import { ref } from 'vue'
-import { isActive, toggleActive } from './state'
+import { isActive, toggleActive, isNestedShow } from './state'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router';
 import axios from 'axios'
@@ -11,6 +11,7 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    
     
     const handleLogout = () => {
     
@@ -29,8 +30,9 @@ export default {
       store.commit('adminState/initializeStore')
       router.push('/logout')
     }
-  
-    return { toggleActive, isActive, handleLogout }
+
+
+    return { toggleActive, isActive, handleLogout, isNestedShow}
   }
 }
 </script>
@@ -67,9 +69,9 @@ export default {
       <SidebarLink to="/reporting" icon="fas fa-chart-bar">Reporting</SidebarLink>
       <!-- <SidebarLink to="/edit-profile" icon="fas fa-cog">Edit Profile</SidebarLink> -->
       <SidebarLink  icon="fas fa-cog">
-        <span>Settings</span>
-        <div class="nested">
-          <SidebarLink :isNested="true" to="/user-management" icon="fas fa-circle">
+        <span @click="isNestedShow = !isNestedShow">Settings</span>
+        <div class="nested" v-if="isNestedShow">
+          <!-- <SidebarLink :isNested="true" to="/user-management" icon="fas fa-circle">
             <span class="text">
               User Management 
             </span>
@@ -78,7 +80,7 @@ export default {
             <span class="text">
               Account Management 
             </span>
-          </SidebarLink>
+          </SidebarLink> -->
 
           <SidebarLink :isNested="true" to="/batch-settings" icon="fas fa-circle"> 
             <span class="text">

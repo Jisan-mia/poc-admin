@@ -7,6 +7,9 @@ export const toggleSidebar = () => (collapsed.value = !collapsed.value)
 export const isActive = ref(false)
 export const toggleActive = () =>  (isActive.value = !isActive.value)
 
+export const isNestedShow = ref(false);
+// export const toggleIsNested = () => (isNestedShow.value = !isNestedShow.value)
+
 
 export const SIDEBAR_WIDTH = 200
 export const SIDEBAR_WIDTH_COLLAPSED = 38

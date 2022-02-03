@@ -107,24 +107,24 @@ const routes = [
             requireLogin: true
         }
     },
-    {
-        path: '/user-management',
-        name: 'AdminUserManagement',
-        component: lazyLoadAdmin('AdminUserManagement'),
-        meta: {
-            layout: AppLayout,
-            requireLogin: true
-        }
-    },
-    {
-        path: '/account-management',
-        name: 'AdminAccountManagement',
-        component: lazyLoadAdmin('AdminAccountManagement'),
-        meta: {
-            layout: AppLayout,
-            requireLogin: true
-        }
-    },
+    // {
+    //     path: '/user-management',
+    //     name: 'AdminUserManagement',
+    //     component: lazyLoadAdmin('AdminUserManagement'),
+    //     meta: {
+    //         layout: AppLayout,
+    //         requireLogin: true
+    //     }
+    // },
+    // {
+    //     path: '/account-management',
+    //     name: 'AdminAccountManagement',
+    //     component: lazyLoadAdmin('AdminAccountManagement'),
+    //     meta: {
+    //         layout: AppLayout,
+    //         requireLogin: true
+    //     }
+    // },
     {
         path: '/batch-settings',
         name: 'AdminBatchSettings',
