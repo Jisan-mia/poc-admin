@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const state = {
+  isCreateExamFromPack: false,
   examPacks: [],
   examLists: [],
   examQuestions: [],
@@ -26,6 +27,9 @@ const mutations = {
   },
   setSavedExamQuestions(state,payload) {
     state.savedExamQuestions = payload
+  },
+  setIsCreateExamFromPack(state, payload) {
+    state.isCreateExamFromPack = payload
   }
 }
 

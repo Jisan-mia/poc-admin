@@ -34,7 +34,8 @@ import ExamCard from '../../components/Exam Management/ExamCard.vue'
 import AdminExamComp from '../../components/Exam Management/AdminExamComp.vue'
 import CreateAllExamQuestion from '@/components/Exam Management/Create Exam Questions/CreateAllExamQuestion.vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { watchEffect } from '@vue/runtime-core'
 
 export default {
   name: "AdminExamManagement",
@@ -129,12 +130,28 @@ export default {
 
         },
       ])
+    const isCreateExamFromPack = computed(() => store.state.examPackState.isCreateExamFromPack)
 
+
+    
      
     const currentCompState = ref('examManagement') // examManagement | isExamManageEdit | isExamManageCreate | questionEditor
     const handleCreateExam = () => {
       currentCompState.value = 'isExamManageCreate';
     }
+    watchEffect(() => {
+      console.log(isCreateExamFromPack.value)
+      if(isCreateExamFromPack.value) {
+        currentCompState.value = 'isExamManageCreate';
+      }
+    })
+
+
+    onBeforeRouteLeave((to, form, next) => {
+      console.log('before route leave')
+      store.commit('examPackState/setIsCreateExamFromPack', false)
+      next()
+    })
 
     const editExam = ref(null)
     const onUpcomingExamCardClick = (exam) => {
@@ -144,6 +161,7 @@ export default {
     }
 
     const handleBack = () => {
+      store.commit('examPackState/setIsCreateExamFromPack', false)
       currentCompState.value = 'examManagement'
     }
 

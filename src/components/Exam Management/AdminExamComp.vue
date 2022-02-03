@@ -270,8 +270,7 @@ export default {
     const handleQuestionEditor = () => {
       console.log('question editor')
       if(isValid()) {
-        
-
+        store.commit('examPackState/setIsCreateExamFromPack', false)
         context.emit('onQuestionEditor')
       }
     }

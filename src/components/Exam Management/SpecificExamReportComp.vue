@@ -96,7 +96,7 @@
     </div>
 
     <div class="header__input">
-      <input v-model="phoneSearch" type="text" placeholder="Search With Name" name="" id=""> <!--phone number was-->
+      <input v-model="phoneSearch" type="text" placeholder="Search with Phone Number" name="" id=""> <!--phone number was-->
       <button :class="{selected: isActive}"  @click="handleSelectFilter('highToLow')">
         Filter High To Low
       </button>
@@ -272,7 +272,7 @@ export default {
         // console.log(specificReportsMain.value)
         if(phoneSearch.value) {
            specificReportsMain.value = specificReportsMain.value.filter(report => {
-            return phoneSearch.value.toLowerCase().split(' ').every(v => report.name.toLowerCase().includes(v)) 
+            return phoneSearch.value.toLowerCase().split(' ').every(v => report.phone_number.toLowerCase().includes(v)) 
           })
         } 
         if(selectedFilter.value) {
@@ -533,7 +533,7 @@ table {
     font-size: 0.8rem;
     line-height: 0.9rem;
     outline: none;
-    padding: 0.7rem 1rem;
+    padding: 0.7rem 0.65rem;
     text-align: center;
     transition: all 0.3s;
     

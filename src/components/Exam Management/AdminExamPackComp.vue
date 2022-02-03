@@ -87,6 +87,7 @@ import CustomAdminBtn from '../ui/CustomAdminBtn.vue';
 import ImgInputModel from '../ui/ImgInputModel.vue';
 import { getNotification } from '../../api/common';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default {
   name: "AdminExamPackComp",
   props: {
@@ -100,6 +101,7 @@ export default {
   },
   setup(props, ctx) {
     const store = useStore();
+    const router = useRouter();
     // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
     const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
 
@@ -193,7 +195,8 @@ export default {
 
     // create an exam
     const handleCreateExam = () => {
-      console.log('create exam')
+      store.commit('examPackState/setIsCreateExamFromPack', true)
+      router.push('/exam-management')
     }
 
 
