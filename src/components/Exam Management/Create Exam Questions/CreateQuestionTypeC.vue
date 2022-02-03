@@ -22,7 +22,7 @@
         <AdminCustomInput 
           :isTextArea="true"
           placeholder="উদ্দীপক..."
-          v-model="questionTypeThree.q_description"
+          v-model="questionTypeThreeMain.q_description"
           :style="{
             minHeight: '120px',
             resize: 'vertical'
@@ -35,17 +35,22 @@
       <CreateQuestionTypeA 
         v-if="examQuestion.type == 'Type 01'" 
         :questionTypeOne="examQuestion" 
-        :isFromTypeC="true"/>
+        :isFromTypeC="true"
+        @typeOneQuestion="typeOneQuestionContent"
+      />
 
       <CreateQuestionTypeB 
         v-if="examQuestion.type == 'Type 02'" 
         :questionTypeTwo="examQuestion" 
-        :isFromTypeC="true"/>
+        :isFromTypeC="true"
+        @typeTwoQuestion="typeTwoQuestionContent"
+
+      />
 
     </div>
 
   </div>
-      <QuestionCreateBtns :isNewQ="questionTypeThree.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
+  <QuestionCreateBtns :isNewQ="questionTypeThree.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
 
 
 
@@ -60,6 +65,8 @@ import AdminCustomInput from '../AdminCustomInput.vue';
 import InputImgComp from '../../ui/InputImgComp.vue';
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { v4 as uuidv4 } from 'uuid';
+import { useStore } from 'vuex';
+import { getNotification } from '../../../api/common';
 
 export default {
   name: "CreateQuestionTypeC",
@@ -72,6 +79,8 @@ export default {
 
   },
   setup(props, ctx) {
+
+    const store = useStore()
 
     const questionTypeThreeMain = ref({
         // uuid: uuidv4(),
@@ -98,8 +107,23 @@ export default {
 
     questionTypeThreeMain.value = !props.questionTypeThree.isNewQuestion 
                                   ? {...props.questionTypeThree} 
-                                  : {...questionTypeThreeMain.value, ...props.questionTypeThree} 
+                                  : {...questionTypeThreeMain.value, ...props.questionTypeThree}
+                                  
+    const typeOneQuestion = ref(null)
+    const typeTwoQuestion = ref(null)
+
   
+
+    const typeOneQuestionContent = (question) => {
+      // console.log(question)
+      typeOneQuestion.value = question
+    }
+
+    const typeTwoQuestionContent = (question) => {
+      // console.log(question)
+      typeTwoQuestion.value = question
+    }
+
 
 
     const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`);
@@ -115,15 +139,172 @@ export default {
     const handleDeleteQuestion = () => {
       console.log('delete q3')
     }
+
+    const isValid1 = () => {
+      const isValid = ref(true);
+      if(!typeOneQuestion.value?.question_name) {
+        store.dispatch('notifications/add', getNotification('warning', `Question name is empty type-1`));
+        return false
+      } else if(!typeOneQuestion.value?.selectedOption) {
+        store.dispatch('notifications/add', getNotification('warning', `You must select an answer type-1`));
+        return false
+      }
+
+      for(let option of typeOneQuestion.value?.options) {
+        if(option.ans == '') {
+          isValid.value = false
+          store.dispatch('notifications/add', getNotification('warning', `Option cannot be empty type-1`))
+          break; 
+        } else {
+          isValid.value = true;
+        }
+      }
+      return isValid.value;
+    }
+
+    const isValid2 = () => {
+      const isValid = ref(true);
+       if(!typeTwoQuestion.value?.question_name) {
+        store.dispatch('notifications/add', getNotification('warning', `Question name is empty type-2`));
+        return false
+      } else if(!typeTwoQuestion.value?.data_one && !typeTwoQuestion.value?.data_two && !typeTwoQuestion.value?.data_three) {
+        store.dispatch('notifications/add', getNotification('warning', `Sample data cannot be empty type-2`));
+        return false
+      } else if(!typeTwoQuestion.value?.selectedOption) {
+        store.dispatch('notifications/add', getNotification('warning', `You must select an answer type-2`));
+        return false
+      }
+
+      for(let option of typeTwoQuestion.value?.options) {
+        if(option.ans == '') {
+          isValid.value = false
+          store.dispatch('notifications/add', getNotification('warning', `Option cannot be empty type-2`))
+          break; 
+        } else {
+          isValid.value = true;
+        }
+      }
+      return isValid.value;
+    }
+
+
+    const checkIsAllValid =()=> {
+      console.log(questionTypeThreeMain.value)
+      const isItValid1 = ref(true)
+      const isItValid2 = ref(true)
+
+
+      if(!questionTypeThreeMain.value?.q_description && !questionTypeThreeMain.value?.q_image) {
+        store.dispatch('notifications/add', getNotification('warning', `Description or image cannot be empty type-3`));
+        return false
+      } 
+
+      if(isValid1()) {
+        const mainOptions = typeOneQuestion.value.options.map((option) => {
+          return {
+            ...option,
+            is_correct: option.ans == typeOneQuestion.value.selectedOption
+          }
+        })
+
+        const findCorrectAns = mainOptions.find(o => o.is_correct)
+        // console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return false
+          // isItValid1.value = false
+
+        }
+        typeOneQuestion.value = {...typeOneQuestion.value, options: mainOptions}
+        isItValid1.value = true
+
+      } else {
+        isItValid1.value = false
+      }
+      
+
+      if(isValid2()) {
+        const mainOptions = typeTwoQuestion.value.options.map((option) => {
+          return {
+            ...option,
+            is_correct: option.ans == typeTwoQuestion.value.selectedOption
+          }
+        })
+
+       const findCorrectAns = mainOptions.find(o => o.is_correct)
+        console.log(findCorrectAns)
+        if(!findCorrectAns?.is_correct) {
+          store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
+
+          return false
+          // isItValid2.value = false
+
+        }
+
+        typeTwoQuestion.value = {...typeTwoQuestion.value, options: mainOptions}
+        isItValid2.value = true
+        
+
+      } else {
+        isItValid2.value = false
+
+      }
+
+      return isItValid1.value && isItValid2.value
+    } 
+
+
+    const saveQ3 = async (question) => {
+      try{
+        await store.dispatch('examPackState/createQuestionTypeThree', question);
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
     const handleSaveQuestion = () => {
       console.log('save q3')
-      ctx.emit('onSaveQuestion',{...questionTypeThreeMain.value}, 'Type 03' )
+
+      if(checkIsAllValid()) {
+
+
+        console.log(typeOneQuestion.value, typeTwoQuestion.value)
+        const mainQuestionThree = {
+          ...questionTypeThreeMain.value,
+          question1: {
+            ...typeOneQuestion.value
+          },
+          question2: {
+            ...typeTwoQuestion.value
+          }
+        }
+        delete mainQuestionThree.otherQuestions
+
+
+
+
+
+      // ctx.emit('onSaveQuestion',{...questionTypeThreeMain.value}, 'Type 03' )
+        saveQ3(mainQuestionThree)
+
+      }
+
+      
+
+
+
+
+
 
       
     }
     const handleEditQuestion = () => {
       console.log('edit q3')
     }
+
+    
 
 
     return {
@@ -133,7 +314,9 @@ export default {
       handleDeleteQuestion,
       handleSaveQuestion,
       handleEditQuestion,
-      questionTypeThreeMain
+      questionTypeThreeMain,
+      typeOneQuestionContent,
+      typeTwoQuestionContent
     }
   },
   components: { CreateQuestionTypeA, CreateQuestionTypeB, QuestionCreateBtns, AdminCustomInput, InputImgComp, ImgInputModel }
@@ -153,7 +336,7 @@ export default {
 .type-3 {
   display: flex;
   flex-direction: column;
-  gap: 5rem;
+  gap: 1.5rem;
   .para__header, .para {
     @extend .pDefault;
     margin-bottom: 0.5rem;
@@ -161,7 +344,7 @@ export default {
   .questions {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    // gap: rem;
   }
 }
 

@@ -144,6 +144,7 @@ import { useStore } from 'vuex';
 import { getNotification } from '../../../api/common';
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
+import { watch, watchEffect } from '@vue/runtime-core';
 export default {
   name: "CreateQuestionTypeB",
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel },
@@ -158,7 +159,7 @@ export default {
     }
   },
   setup(props, ctx) {
-    console.log(props.questionTypeTwo);
+    // console.log(props.questionTypeTwo);
     const store  = useStore();
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
 
@@ -208,6 +209,13 @@ export default {
                                   : {...questionTypeTwoMain.value, ...props.questionTypeTwo} 
 
 
+    watch(questionTypeTwoMain.value, () => {
+      if(props.isFromTypeC) {
+        ctx.emit('typeTwoQuestion', questionTypeTwoMain.value)
+      }
+    })
+
+
     const dataOptions = computed(() => {
       if(props.isFromTypeC) {
         return [
@@ -235,7 +243,7 @@ export default {
     const isValid = () => {
       const isValid = ref(true);
       if(!questionTypeTwoMain.value.description && !questionTypeTwoMain.value.Q_image) {
-        store.dispatch('notifications/add', getNotification('warning', `Description of image cannot be empty`));
+        store.dispatch('notifications/add', getNotification('warning', `Description or image cannot be empty`));
         return false
       } else if(!questionTypeTwoMain.value.question_name) {
         store.dispatch('notifications/add', getNotification('warning', `Question name is empty`));

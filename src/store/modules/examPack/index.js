@@ -488,6 +488,52 @@ const actions = {
     
   },
 
+  async createQuestionTypeThree(context, payload) {
+    console.log(payload)
+    const {q_description, q_image, exam_pack, exam_name} = payload;
+
+    const mainData = {
+      exam_pack, 
+      exam_name,
+      q_description, 
+      q_image, 
+      question_name: payload.question1?.question_name,
+      question_one_ans_one: payload.question1?.options[0].ans,
+      question_one_ans_one_is_correct: payload.question1?.options[0].is_correct,
+      question_one_ans_two: payload.question1?.options[1].ans,
+      question_one_ans_two_is_correct: payload.question1?.options[1].is_correct,
+      question_one_ans_three: payload.question1?.options[2].ans,
+      question_one_ans_three_is_correct: payload.question1?.options[2].is_correct,
+      question_one_ans_four: payload.question1?.options[3].ans,
+      question_one_ans_four_is_correct: payload.question1?.options[3].is_correct,
+
+      question_name_two:  payload.question2.question_name,
+      sample_one: payload.question2?.data_one,
+      sample_two: payload.question2?.data_two,
+      sample_three: payload.question2?.data_three,
+      question_two_ans_one: payload.question2?.options[0].ans,
+      question_two_ans_one_is_correct: payload.question2?.options[0].is_correct,
+      question_two_ans_two: payload.question2?.options[1].ans,
+      question_two_ans_two_is_correct: payload.question2?.options[1].is_correct,
+      question_two_ans_three: payload.question2?.options[2].ans,
+      question_two_ans_three_is_correct: payload.question2?.options[2].is_correct,
+      question_two_ans_four: payload.question2?.options[3].ans,
+      question_two_ans_four_is_correct: payload.question2?.options[3].is_correct,
+    }
+
+
+    const res = await examPackApi.createQuestionOneTwo(mainData, 'https://www.exam.poc.ac/api/create_q_three/');
+    console.log(res)
+    const resData = await res?.data;
+    if(resData) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
+    } else {
+      throw new Error('could not create question type three')
+    }
+
+    console.log(mainData)
+  },
+
 
   async deleteQuestionTypeOne(context, questionId) {
     const res = await examPackApi.deleteQuestionOneTwo(`https://www.exam.poc.ac/api/delete_question_one/${questionId}`)

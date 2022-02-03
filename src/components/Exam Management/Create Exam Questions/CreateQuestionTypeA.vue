@@ -97,7 +97,7 @@ export default {
   },
   setup(props, ctx) {
     const store = useStore();
-    console.log(props.questionTypeOne);
+    // console.log(props.questionTypeOne);
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
   
 
@@ -143,6 +143,11 @@ export default {
     // watch(questionTypeOneMain.value, () => {
     //   console.log(questionTypeOneMain.value);
     // })
+    watch(questionTypeOneMain.value, () => {
+      if(props.isFromTypeC) {
+        ctx.emit('typeOneQuestion', questionTypeOneMain.value)
+      }
+    })
     
 
 
