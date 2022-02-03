@@ -269,6 +269,22 @@ export default {
     }
 
 
+    const saveQ2 = async (question) => {
+      try{
+        await store.dispatch('examPackState/createQuestionTypeTwo', question);
+
+        const findQ = examAllQuestions.value.find(q => q.uuid == questionTypeTwoMain.value.uuid)
+        // console.log(findQ)
+        if(!findQ?.isNewQuestion) {
+          questionTypeTwoMain.value.isNewQuestion = false
+        }
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
+
 
 
     const handleSaveQuestion = () => {
@@ -291,7 +307,8 @@ export default {
         }
 
 
-        ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'Type 02' )
+        // ctx.emit('onSaveQuestion',{...questionTypeTwoMain.value, options: mainOptions}, 'Type 02' )
+        saveQ2({...questionTypeTwoMain.value, options: mainOptions})
       }
     }
 
@@ -315,7 +332,7 @@ export default {
 
         try {
           await store.dispatch('examPackState/editQuestionTypeTwo', {...questionTypeTwoMain.value, options: mainOptions});
-          await store.dispatch('examPackState/loadExamQuestions', questionTypeTwoMain.value.exam_name);
+          // await store.dispatch('examPackState/loadExamQuestions', questionTypeTwoMain.value.exam_name);
 
         } catch(err) {
           console.log(err)

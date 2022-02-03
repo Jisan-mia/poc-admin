@@ -2,7 +2,7 @@
   <div class="questionCont">
     <div class="inner">
       <div class="question__area">
-        <component :is="comp" v-bind="compProps" @onSaveQuestion="handleSaveQ"/>
+        <component :is="comp" v-bind="compProps"/>
       </div>
 
       <div class="selection__area">
@@ -204,53 +204,15 @@ export default {
     })
 
 
-    const saveQ1 = async (question) => {
-      try{
-        await store.dispatch('examPackState/createQuestionTypeOne', question);
-        // const upd = computed(() => examAllQuestions.value.map(q => q.uuid == question.uuid ? {...q, ...question, isNewQuestion: false} : q))
-        // store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, upd.value )
+    
 
 
-        await store.dispatch('examPackState/loadExamQuestions', examName);
-
-      } catch(err) {
-        console.log(err)
-      }
-    }
-
-    const saveQ2 = async (question) => {
-      try{
-        await store.dispatch('examPackState/createQuestionTypeTwo', question);
-        await store.dispatch('examPackState/loadExamQuestions', examName);
-
-
-
-      } catch(err) {
-        console.log(err)
-      }
-    }
-    const saveQ3 = () => {
-      
-    }
-
-
-    const handleSaveQ = (question, type) => {
-      console.log('save from main')
-      console.log(question, type);
-      if(type == 'Type 01') {
-        saveQ1(question)
-      } else if(type == 'Type 02') {
-        saveQ2(question)
-      } else {
-        saveQ3()
-      }
-    }
+    
     return {
       typeOptions,
       typeSelected,
       comp,
       compProps,
-      handleSaveQ
     }
   }
 }

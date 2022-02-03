@@ -442,6 +442,16 @@ const actions = {
       allMainOptions.forEach(async (option) => {
         await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
       })
+
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+
+
+
+
+
+
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
     } else {
@@ -480,6 +490,10 @@ const actions = {
       allMainOptions.forEach(async (option) => {
         await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
       })
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
     } else {
@@ -526,6 +540,9 @@ const actions = {
     console.log(res)
     const resData = await res?.data;
     if(resData) {
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
     } else {
       throw new Error('could not create question type three')
@@ -561,6 +578,22 @@ const actions = {
     }
   },
 
+  async deleteQuestionTypeThree(context, questionId) {
+    const res = await examPackApi.deleteQuestionOneTwo(`https://www.exam.poc.ac/api/delete_question_three/${questionId}`)
+    
+    const resCode = await res?.code
+    if(resCode == 200) {
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Deleted'} , {root: true})
+    } else {
+      context.dispatch('notifications/add', {type: 'error', message: 'Failed to Delete'} , {root: true})
+      throw new Error('could not delete question model two')
+
+    }
+  },
+
+
+
+
   async editQuestionTypeOne(context, question) {
     const {id, exam_name, exam_pack, q_image, question_name} = question;
     const allOptions = question.options
@@ -590,6 +623,10 @@ const actions = {
       allOptions.forEach(async (option) => {
         await examPackApi.editQuestionAndOption(option, `https://www.exam.poc.ac/api/edit_ans_model_one/${option.id}`)
       })
+
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == question.uuid ? {...q, ...question} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
 
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Edited'} , {root: true})
 
@@ -634,6 +671,10 @@ const actions = {
         await examPackApi.editQuestionAndOption(option, `https://www.exam.poc.ac/api/edit_ans_two/${option.id}`)
       })
 
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == question.uuid ? {...q, ...question} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Edited'} , {root: true})
 
     } else {
@@ -642,7 +683,53 @@ const actions = {
 
   },
   
+  async editQuestionTypeThree(context, payload) {
+    const {q_description, q_image, exam_pack, exam_name} = payload;
 
+    const mainData = {
+      q_description, 
+      q_image, 
+      question_name: payload.question1?.question_name,
+      question_one_ans_one: payload.question1?.options[0].ans,
+      question_one_ans_one_is_correct: payload.question1?.options[0].is_correct,
+      question_one_ans_two: payload.question1?.options[1].ans,
+      question_one_ans_two_is_correct: payload.question1?.options[1].is_correct,
+      question_one_ans_three: payload.question1?.options[2].ans,
+      question_one_ans_three_is_correct: payload.question1?.options[2].is_correct,
+      question_one_ans_four: payload.question1?.options[3].ans,
+      question_one_ans_four_is_correct: payload.question1?.options[3].is_correct,
+
+      question_name_two:  payload.question2.question_name,
+      sample_one: payload.question2?.data_one,
+      sample_two: payload.question2?.data_two,
+      sample_three: payload.question2?.data_three,
+      question_two_ans_one: payload.question2?.options[0].ans,
+      question_two_ans_one_is_correct: payload.question2?.options[0].is_correct,
+      question_two_ans_two: payload.question2?.options[1].ans,
+      question_two_ans_two_is_correct: payload.question2?.options[1].is_correct,
+      question_two_ans_three: payload.question2?.options[2].ans,
+      question_two_ans_three_is_correct: payload.question2?.options[2].is_correct,
+      question_two_ans_four: payload.question2?.options[3].ans,
+      question_two_ans_four_is_correct: payload.question2?.options[3].is_correct,
+    }
+    if(!mainData.q_image || typeof mainData.q_image == 'string') {
+      // console.log(mainProfile.q_image)
+      delete mainData.q_image
+    }
+
+    const questionRes = await examPackApi.editQuestionAndOption(mainData, `https://www.exam.poc.ac/api/edit_question_three/${payload.id}`);
+    const questionData = await questionRes.data;
+
+    if(questionData) {
+      const allQuestion = context.state.examQuestions;
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, otherQuestions: [payload.question1, payload.question2]} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+      context.dispatch('notifications/add', {type: 'success', message: 'Successfully Edited'} , {root: true})
+    } else {
+      throw new Error('could not create question type three')
+    }
+
+  }
 }
 
 

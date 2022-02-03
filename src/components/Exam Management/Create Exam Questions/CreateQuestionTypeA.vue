@@ -64,7 +64,7 @@
 
     </div>
 
-    <QuestionCreateBtns v-if="!isFromTypeC" :isNewQ="questionTypeOne.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
+    <QuestionCreateBtns v-if="!isFromTypeC" :isNewQ="questionTypeOneMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
     
   </div>
 </template>
@@ -176,6 +176,24 @@ export default {
       return isValid.value;
     }
 
+
+    const saveQ1 = async (question) => {
+      try{
+        await store.dispatch('examPackState/createQuestionTypeOne', question);
+        // console.log(examAllQuestions.value)
+        const findQ = examAllQuestions.value.find(q => q.uuid == questionTypeOneMain.value.uuid)
+        console.log(findQ)
+
+        if(!findQ?.isNewQuestion) {
+          questionTypeOneMain.value.isNewQuestion = false
+        }
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
+
     const handleSaveQuestion = () => {
       console.log('save question')
       if(isValid()) {
@@ -195,7 +213,8 @@ export default {
           return
         }
 
-        ctx.emit('onSaveQuestion',{...questionTypeOneMain.value, options: mainOptions}, 'Type 01' )
+        // ctx.emit('onSaveQuestion',{...questionTypeOneMain.value, options: mainOptions}, 'Type 01' );
+        saveQ1({...questionTypeOneMain.value, options: mainOptions})
       }
     }
 
@@ -218,7 +237,7 @@ export default {
 
         try {
           await store.dispatch('examPackState/editQuestionTypeOne', {...questionTypeOneMain.value, options: mainOptions});
-          await store.dispatch('examPackState/loadExamQuestions', questionTypeOneMain.value.exam_name);
+          // await store.dispatch('examPackState/loadExamQuestions', questionTypeOneMain.value.exam_name);
 
         } catch(err) {
           console.log(err)

@@ -50,7 +50,7 @@
     </div>
 
   </div>
-  <QuestionCreateBtns :isNewQ="questionTypeThree.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
+  <QuestionCreateBtns :isNewQ="questionTypeThreeMain.isNewQuestion" @onQuestionDelete="handleDeleteQuestion" @onQuestionSave="handleSaveQuestion" @onQuestionEdit="handleEditQuestion"  />
 
 
 
@@ -67,10 +67,12 @@ import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from 'vuex';
 import { getNotification } from '../../../api/common';
+import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
+import { watchEffect } from '@vue/runtime-core';
 
 export default {
   name: "CreateQuestionTypeC",
-  emits: ['onSaveQuestion'],
+  // emits: ['onSaveQuestion'],
   props: {
     questionTypeThree: {
       type: Object,
@@ -81,12 +83,15 @@ export default {
   setup(props, ctx) {
 
     const store = useStore()
+    const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+
 
     const questionTypeThreeMain = ref({
         // uuid: uuidv4(),
         // exam_pack: '',
         // exam_name: '',      -> these attributes come from props always when question is added
-        // isNewQuestion: true,
+        uuid: '',
+        isNewQuestion: true,
         type: 'Type 03',
         q_description: '',
         q_image: '',
@@ -108,10 +113,18 @@ export default {
     questionTypeThreeMain.value = !props.questionTypeThree.isNewQuestion 
                                   ? {...props.questionTypeThree} 
                                   : {...questionTypeThreeMain.value, ...props.questionTypeThree}
+
+    // const isItNewQuestion = computed(() => props.questionTypeThree.isNewQuestion )
                                   
     const typeOneQuestion = ref(null)
     const typeTwoQuestion = ref(null)
 
+    watchEffect(() => {
+      if(!props.questionTypeThree.isNewQuestion ) {
+        typeOneQuestion.value = questionTypeThreeMain.value.otherQuestions[0]
+        typeTwoQuestion.value = questionTypeThreeMain.value.otherQuestions[1]
+      }
+    })
   
 
     const typeOneQuestionContent = (question) => {
@@ -135,9 +148,35 @@ export default {
       previewImage.value = e;
     }
 
+    const updatedDeletedQ = (question) => {
+      const filteredQ = examAllQuestions.value.filter(q => q.uuid !== question.uuid)
+      store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, filteredQ )
+    }
+
+
+    const deleteQ1 = async (question) => {
+      try {
+        await store.dispatch('examPackState/deleteQuestionTypeThree', question.id);
+        updatedDeletedQ(question)
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
 
     const handleDeleteQuestion = () => {
-      console.log('delete q3')
+      console.log('delete question', );
+      // ctx.emit('onDeleteQuestion', questionTypeOneMain.value, 'Type 01')
+      if(questionTypeThreeMain.value.isNewQuestion) {
+        // const filteredQ = examAllQuestions.value.filter(question => question.uuid !== questionTypeOneMain.value.uuid)
+        // store.commit(`examPackState/${examPackMutationTypes.SET_EXAM_QUESTIONS}`, filteredQ )
+        updatedDeletedQ(questionTypeThreeMain.value)
+
+
+      } else {
+        deleteQ1(questionTypeThreeMain.value)
+      }
     }
 
     const isValid1 = () => {
@@ -258,6 +297,11 @@ export default {
     const saveQ3 = async (question) => {
       try{
         await store.dispatch('examPackState/createQuestionTypeThree', question);
+        
+        const findQ = examAllQuestions.value.find(q => q.uuid == questionTypeThreeMain.value.uuid)
+        if(!findQ?.isNewQuestion) {
+          questionTypeThreeMain.value.isNewQuestion = false
+        }
 
       } catch(err) {
         console.log(err)
@@ -268,7 +312,6 @@ export default {
       console.log('save q3')
 
       if(checkIsAllValid()) {
-
 
         console.log(typeOneQuestion.value, typeTwoQuestion.value)
         const mainQuestionThree = {
@@ -281,27 +324,38 @@ export default {
           }
         }
         delete mainQuestionThree.otherQuestions
-
-
-
-
-
-      // ctx.emit('onSaveQuestion',{...questionTypeThreeMain.value}, 'Type 03' )
+        
+        // ctx.emit('onSaveQuestion',{...questionTypeThreeMain.value}, 'Type 03' )
         saveQ3(mainQuestionThree)
 
       }
-
-      
-
-
-
-
-
-
       
     }
-    const handleEditQuestion = () => {
-      console.log('edit q3')
+
+    const handleEditQuestion = async () => {
+      if(checkIsAllValid()) {
+
+        console.log(typeOneQuestion.value, typeTwoQuestion.value)
+        const mainQuestionThree = {
+          ...questionTypeThreeMain.value,
+          question1: {
+            ...typeOneQuestion.value
+          },
+          question2: {
+            ...typeTwoQuestion.value
+          }
+        }
+        delete mainQuestionThree.otherQuestions
+        
+        // ctx.emit('onSaveQuestion',{...questionTypeThreeMain.value}, 'Type 03' )
+        try {
+          await store.dispatch('examPackState/editQuestionTypeThree', mainQuestionThree);
+
+        } catch(err) {
+          console.log(err)
+        }
+
+      }
     }
 
     
@@ -316,7 +370,7 @@ export default {
       handleEditQuestion,
       questionTypeThreeMain,
       typeOneQuestionContent,
-      typeTwoQuestionContent
+      typeTwoQuestionContent,
     }
   },
   components: { CreateQuestionTypeA, CreateQuestionTypeB, QuestionCreateBtns, AdminCustomInput, InputImgComp, ImgInputModel }
