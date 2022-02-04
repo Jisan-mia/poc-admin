@@ -208,9 +208,9 @@ export default {
       level: '',
       batch: '',
       exam_pack: '',  //in this section we have to be need examInfo ID
-      total_mark: 0,
-      mark_per_question: 0,
-      pass_mark: 0,
+      total_mark: '',
+      mark_per_question: '',
+      pass_mark: '',
       exam_total_time: '',
 
       isRandomized: false,
