@@ -40,7 +40,7 @@
             <div class="select">
               <label>Level</label>
               <select name="label" id="label" v-model="examInfo.level" >
-                <option selected disabled value="">Select Label</option>
+                <option selected disabled value="">Select Level</option>
                 <!-- <option value="JSC">JSC</option>
                 <option value="SSC">SSC</option>
                 <option value="HSC">HSC</option>
