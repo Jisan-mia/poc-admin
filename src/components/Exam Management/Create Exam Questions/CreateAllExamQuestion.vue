@@ -88,6 +88,7 @@ export default {
       } return examListD.value
     })
 
+
     watchEffect(() => {
       if(selectedExamPack.value) {
         selectedExam.value = ''

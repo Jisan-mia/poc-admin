@@ -67,7 +67,7 @@ export default {
           ...userAuthInput.value
         })
         buttonLoading.value = false
-        router.push('/')
+        router.push('/dashboard')
       } catch(err) {
         console.log(err.message);
         setTimeout(() => {

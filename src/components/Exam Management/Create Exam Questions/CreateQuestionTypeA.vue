@@ -16,7 +16,7 @@
       </div>
 
       <div class="qBottom">
-        <AdminCustomInput 
+        <!-- <AdminCustomInput 
           :isTextArea="true"
           placeholder="প্রশ্ন..."
           v-model="questionTypeOneMain.question_name"
@@ -24,7 +24,12 @@
             minHeight: '120px',
             resize: 'vertical'
           }"
-          />
+          /> -->
+
+        <QuestionTextArea
+          placeholder="প্রশ্ন..."
+          v-model="questionTypeOneMain.question_name"
+        />
       </div>
     </div>
 
@@ -53,10 +58,10 @@
               background: 'transparent',
               padding: '0rem',
               minHeight: '40px',
-              resize: 'vertical',
-              width: '100%'
+              width: '100%',
+              fontSize: '16px',
+              fontWeight: '400'
             }"
-            :isTextArea="true"
           />
         </span>
 
@@ -82,9 +87,10 @@ import { watch, watchEffect } from '@vue/runtime-core';
 import { useStore } from 'vuex';
 import { getNotification } from '../../../api/common';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
+import QuestionTextArea from '../../ui/QuestionTextArea.vue';
 export default {
   name: "CreateQuestionTypeA",
-  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel },
+  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel, QuestionTextArea },
   props: {
     questionTypeOne: {
       type: Object,
@@ -394,12 +400,13 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.95rem;
+    gap: 0.68rem;
     margin-top:0.9rem;
 
     .option {
       width: 100%;
       display: flex;
+      align-items: center;
       justify-content: flex-start;
       border-bottom: 1px solid grey;
       

@@ -200,7 +200,7 @@
         </td>
         <td>
           <span>
-            {{report.negative_marking}}
+            {{Math.round(report.negative_marking*100)/100}}
           </span>
         </td>
       </tr>

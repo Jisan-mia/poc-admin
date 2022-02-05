@@ -398,7 +398,7 @@ export default {
   .questions {
     display: flex;
     flex-direction: column;
-    // gap: rem;
+    margin-top: 1rem;
   }
 }
 

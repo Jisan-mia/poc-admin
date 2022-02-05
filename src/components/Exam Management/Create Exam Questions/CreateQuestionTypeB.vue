@@ -36,8 +36,7 @@
 
         <span class="qH">প্রশ্ন...</span>
         <span class="qHI">
-          <AdminCustomInput 
-          :isTextArea="true"
+          <!-- <AdminCustomInput 
           v-model="questionTypeTwoMain.question_name"
           :style="{
             border: 'none',
@@ -46,7 +45,13 @@
             minHeight: '40px',
             resize: 'vertical'
           }"
+          :isTextArea="true"
+        /> -->
+        <QuestionTextArea
+          placeholder="প্রশ্ন..."
+          v-model="questionTypeTwoMain.question_name"
         />
+        
         </span>
       </p>
       <div class="hints__option">
@@ -58,13 +63,13 @@
             <AdminCustomInput
               v-model="questionTypeTwoMain[key]"
               :placeholder="questionTypeTwoMain[key]"
-              :isTextArea="true"
               :style="{
                 border: 'none',
                 padding: '0px',
                 background: 'inherit',
                 minHeight: '40px',
-                resize: 'vertical'
+                fontSize: '16px',
+                fontWeight: '400'
               }"
               />
           </li>
@@ -109,10 +114,10 @@
               background: 'transparent',
               padding: '0rem',
               minHeight: '40px',
-              resize: 'vertical',
-              width: '100%'
+              width: '100%',
+              fontSize: '16px',
+              fontWeight: '400'
             }"
-            :isTextArea="true"
           />
         </span>
 
@@ -145,9 +150,10 @@ import { getNotification } from '../../../api/common';
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 import { watch, watchEffect } from '@vue/runtime-core';
+import QuestionTextArea from '../../ui/QuestionTextArea.vue';
 export default {
   name: "CreateQuestionTypeB",
-  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel },
+  components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel, QuestionTextArea },
   props: {
     questionTypeTwo: {
       type: Object,
@@ -407,21 +413,22 @@ export default {
     flex-direction: column;
     justify-content: center;
     gap: 0.8rem;
-    margin-top: 1rem;
+    margin-top: 0.3rem;
     width: 100%;
 
     .hints__header {
-      margin-bottom: 1rem;
+      margin-bottom: 0.2rem;
+      margin-top: 0.5rem;
     }
     .qH {
       font-weight: 600;
       color: #000000cf;
       font-size: 1.13rem;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
     }
     .qHI {
-      border-bottom: 1px solid grey;
-      margin-bottom: 1.5rem;
+      // border-bottom: 1px solid grey;
+      margin-bottom: 0.5rem;
       margin-top: 0.5rem;
       display: flex;
       flex-direction: column;
@@ -432,11 +439,13 @@ export default {
       list-style-type: none;
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
+      gap: 0.68rem;
       
       li {
         border-bottom: 1px solid grey;
         display: flex;
+        align-items: center;
+
         justify-content: flex-start;
         gap: 0.38rem;
 
@@ -538,12 +547,13 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.95rem;
-    margin-top:0.9rem;
+    gap: 0.68rem;
+    margin-top:0.2rem;
 
     .option {
       width: 100%;
       display: flex;
+      align-items: center;
       justify-content: flex-start;
       border-bottom: 1px solid grey;
       

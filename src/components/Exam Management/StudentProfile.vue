@@ -198,7 +198,7 @@ export default {
     }) 
 
     const failedPercentage = computed(() => {
-      return 100 - passedPercentage.value 
+      return previousExamReport.value.length === 0 ? 0 : 100 - passedPercentage.value 
     });
 
     const handleClickUpcomingExam = (exam) => {
