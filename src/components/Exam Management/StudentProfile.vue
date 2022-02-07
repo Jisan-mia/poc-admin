@@ -34,6 +34,7 @@
     <!-- dashboard stats start -->
     <div class="stats">
       <div class="stats__chart">
+        <StatsChart :chartPercents="chartPercents" />
       </div>
 
       <div class="stats__cards">
@@ -127,12 +128,14 @@ import UpcomingExamCard from './UpcomingExamCard.vue'
 import { useStore } from 'vuex'
 import dayjs from 'dayjs';
 import { useRoute, useRouter } from 'vue-router'
+import StatsChart from './StatsChart.vue';
 
 export default {
   components: {
     DashboardStatsCountCard,
-    UpcomingExamCard
-  },
+    UpcomingExamCard,
+    StatsChart
+},
   name: 'StudentDashboard', 
   setup() {
     const store = useStore();
@@ -151,6 +154,15 @@ export default {
         return studentWiseReportings.value[profile.value.user]
       } return []
     });
+
+     const chartPercents = computed(() => {
+      return previousExamReport.value.map(report => {
+        return {
+          exam_name: report.Exam_name,
+          percent: (Number(report.score)/Number(report.total_mark)) * 100
+        }
+      })
+    })
 
 
 
@@ -220,7 +232,8 @@ export default {
       completedExams,
       averageMark,
       passedPercentage,
-      failedPercentage
+      failedPercentage,
+      chartPercents
     }
   }
 }
@@ -338,7 +351,6 @@ export default {
     border: 1px solid #00A9DC;
     border-radius: 18px; 
     width: 100%;
-    background: #eae7f7;
     padding: 0.5rem;
     min-height: 200px;
     @include maxMedia(768px) {
