@@ -80,10 +80,10 @@
         <div class="marking">
           <h3>Marking</h3>
           <div class="input__cont">
-            <AdminCustomInput label="Per Question Mark" v-model="examInfo.mark_per_question" placeholder="Per Question Mark" type="number"/>
-            <AdminCustomInput label="Question Amount" v-model="examInfo.question_amount" placeholder="Question Amount" type="number"/>
-            <AdminCustomInput label="Total" v-model="examInfo.total_mark"  placeholder="Enter Total Mark" type="number" :disabled="true"/>
-            <AdminCustomInput label="Pass Mark" v-model="examInfo.pass_mark" placeholder="Enter Pass Mark" type="number"/>
+            <AdminCustomInput label="Per Question Mark" v-model="examInfo.mark_per_question" placeholder="Per Question Mark" type="number" @wheel="$event.target.blur()"/>
+            <AdminCustomInput label="Question Amount" v-model="examInfo.question_amount" placeholder="Question Amount" type="number" @wheel="$event.target.blur()"/>
+            <AdminCustomInput label="Total" v-model="examInfo.total_mark"  placeholder="Enter Total Mark" type="number" :disabled="true" @wheel="$event.target.blur()"/>
+            <AdminCustomInput label="Pass Mark" v-model="examInfo.pass_mark" placeholder="Enter Pass Mark" type="number" @wheel="$event.target.blur()"/>
           </div>
         </div>
 
@@ -110,7 +110,9 @@
               <p>Amount per mistake</p>
               <AdminCustomInput 
                 :style="{maxHeight: '35px', maxWidth: '80px', textAlign: 'center'}" 
-                v-model="examInfo.amount_per_mistake" type="number"/>
+                v-model="examInfo.amount_per_mistake" type="number" 
+                @wheel="$event.target.blur()"
+              />
             </div>
           </div>
         </div>
@@ -120,7 +122,9 @@
           <div class="totalTime">
             <AdminCustomInput 
               :style="{maxHeight: '42px', textAlign: 'center'}" 
-              v-model="examInfo.exam_total_time" type="number"/>
+              v-model="examInfo.exam_total_time" type="number"
+              @wheel="$event.target.blur()"
+            />
           </div>
         </div>
 

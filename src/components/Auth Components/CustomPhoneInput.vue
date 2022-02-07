@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <span>+88</span>
-    <input min="0" type="number" :value="modelValue" @input="updateValue" :placeholder="placeholder">
+    <input min="0" type="number" :value="modelValue" @input="updateValue" :placeholder="placeholder" @wheel="$event.target.blur()">
   </div>
 </template>
 
