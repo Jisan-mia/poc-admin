@@ -80,8 +80,9 @@
         <div class="marking">
           <h3>Marking</h3>
           <div class="input__cont">
-            <AdminCustomInput label="Total" v-model="examInfo.total_mark" placeholder="Enter Total Mark" type="number"/>
             <AdminCustomInput label="Per Question Mark" v-model="examInfo.mark_per_question" placeholder="Per Question Mark" type="number"/>
+            <AdminCustomInput label="Question Amount" v-model="examInfo.question_amount" placeholder="Question Amount" type="number"/>
+            <AdminCustomInput label="Total" v-model="examInfo.total_mark"  placeholder="Enter Total Mark" type="number" :disabled="true"/>
             <AdminCustomInput label="Pass Mark" v-model="examInfo.pass_mark" placeholder="Enter Pass Mark" type="number"/>
           </div>
         </div>
@@ -211,6 +212,7 @@ export default {
       total_mark: '',
       mark_per_question: '',
       pass_mark: '',
+      question_amount: '',
       exam_total_time: '',
 
       isRandomized: false,
@@ -221,6 +223,16 @@ export default {
 
     examInfo.value = !props.isExamManageCreate ? {...props.editExam} : {...examInfo.value}
     console.log(examInfo.value);
+
+    watchEffect(() => {
+      if(examInfo.value.mark_per_question && examInfo.value.question_amount ) {
+        examInfo.value.total_mark = examInfo.value.mark_per_question*examInfo.value.question_amount
+      } else if(examInfo.value.mark_per_question && !examInfo.value.question_amount) {
+        examInfo.value.total_mark = examInfo.value.mark_per_question
+      } else if(!examInfo.value.mark_per_question && examInfo.value.question_amount) {
+        examInfo.value.total_mark = examInfo.value.question_amount
+      }
+    })
 
 
     // validate field 
