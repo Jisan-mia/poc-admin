@@ -46,6 +46,10 @@ export default {
   opacity: 0;
 }
 
+.fa-sign-out-alt{
+  transform: rotate(180deg)
+}
+
 span{
   font-size: 0.9rem;
   white-space: nowrap;
