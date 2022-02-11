@@ -19,7 +19,7 @@
       </div>
 
       <div class="qBottom">
-        <AdminCustomInput 
+        <!-- <AdminCustomInput 
           :isTextArea="true"
           placeholder="উদ্দীপক..."
           v-model="questionTypeThreeMain.q_description"
@@ -27,7 +27,15 @@
             minHeight: '120px',
             resize: 'vertical'
           }"
-          />
+          /> -->
+        <div class="cont">
+
+          <ckeditor 
+            :editor="editor" 
+            v-model="questionTypeThreeMain.q_description"
+            :config="editorConfig" :disabled="false">
+          </ckeditor>
+        </div>
       </div>
     </div>
     
@@ -66,9 +74,12 @@ import InputImgComp from '../../ui/InputImgComp.vue';
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from 'vuex';
-import { getNotification } from '../../../api/common';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 import { watchEffect } from '@vue/runtime-core';
+import { editorConfig, getNotification } from '../../../api/common';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+
+
 
 export default {
   name: "CreateQuestionTypeC",
@@ -84,6 +95,8 @@ export default {
 
     const store = useStore()
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+    const editor = InlineEditor;
+
 
 
     const questionTypeThreeMain = ref({
@@ -371,6 +384,8 @@ export default {
       questionTypeThreeMain,
       typeOneQuestionContent,
       typeTwoQuestionContent,
+      editor,
+      editorConfig
     }
   },
   components: { CreateQuestionTypeA, CreateQuestionTypeB, QuestionCreateBtns, AdminCustomInput, InputImgComp, ImgInputModel }
@@ -381,6 +396,32 @@ export default {
 
 @import '@/styles/config.scss';
 
+
+.cont {
+  div {
+    background: #fdfdfd;
+    border: 1.8px solid #00A9DC !important;
+    box-sizing: border-box; 
+  }
+  .ck.ck-editor__editable_inline>:last-child {
+    margin-bottom: 0.5rem !important;
+  }
+  .ck.ck-editor__editable_inline>:first-child {
+    margin-top: 0.5rem !important;
+  }
+}
+.cont.contOptions {
+  div {
+    background: transparent;
+    border: none!important;
+    box-sizing: border-box; 
+    padding-left: 0!important;
+
+  }
+  .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+    box-shadow: none !important;
+  }
+}
 .pDefault {
   font-size: 1rem;
   color: rgb(0 0 0 / 70%);

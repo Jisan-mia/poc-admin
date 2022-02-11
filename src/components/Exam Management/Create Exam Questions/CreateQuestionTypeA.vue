@@ -26,10 +26,18 @@
           }"
           /> -->
 
-        <QuestionTextArea
+        <!-- <QuestionTextArea
           placeholder="প্রশ্ন..."
           v-model="questionTypeOneMain.question_name"
-        />
+        /> -->
+        <div class="cont">
+
+          <ckeditor 
+            :editor="editor" 
+            v-model="questionTypeOneMain.question_name" 
+            :config="editorConfig" :disabled="false">
+          </ckeditor>
+        </div>
       </div>
     </div>
 
@@ -50,7 +58,7 @@
           />
         </span>
         <span class='input__elm'>
-          <AdminCustomInput 
+          <!-- <AdminCustomInput 
             :placeholder="questionTypeOneMain.options[index].ans"
             v-model="questionTypeOneMain.options[index].ans"
             :style="{
@@ -62,7 +70,14 @@
               fontSize: '16px',
               fontWeight: '400'
             }"
-          />
+          /> -->
+          <div class="cont contOptions">
+            <ckeditor 
+            :editor="editor" 
+            v-model="questionTypeOneMain.options[index].ans" 
+            :config="editorConfig" :disabled="false">
+          </ckeditor>
+          </div>
         </span>
 
       </div>
@@ -85,9 +100,13 @@ import InputImgComp from '../../ui/InputImgComp.vue';
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { watch, watchEffect } from '@vue/runtime-core';
 import { useStore } from 'vuex';
-import { getNotification } from '../../../api/common';
+import { editorConfig, getNotification } from '../../../api/common';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 import QuestionTextArea from '../../ui/QuestionTextArea.vue';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+
+
+
 export default {
   name: "CreateQuestionTypeA",
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel, QuestionTextArea },
@@ -105,7 +124,8 @@ export default {
     const store = useStore();
     // console.log(props.questionTypeOne);
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
-  
+    const editor = InlineEditor;
+
 
     const questionTypeOneMain = ref({
       // uuid: uuidv4(), 
@@ -150,6 +170,7 @@ export default {
     //   console.log(questionTypeOneMain.value);
     // })
     watch(questionTypeOneMain.value, () => {
+      console.log(questionTypeOneMain.value)
       if(props.isFromTypeC) {
         ctx.emit('typeOneQuestion', questionTypeOneMain.value)
       }
@@ -297,7 +318,9 @@ export default {
       handleDeleteQuestion,
       handleSaveQuestion,
       questionTypeOneMain,
-      handleEditQuestion
+      handleEditQuestion,
+      editor,
+      editorConfig
     }
   }
 }
@@ -307,7 +330,31 @@ export default {
 
 @import '@/styles/config.scss';
 
-  
+.cont {
+  div {
+    background: #fdfdfd;
+    border: 1.8px solid #00A9DC !important;
+    box-sizing: border-box; 
+  }
+  .ck.ck-editor__editable_inline>:last-child {
+    margin-bottom: 0.5rem !important;
+  }
+  .ck.ck-editor__editable_inline>:first-child {
+    margin-top: 0.5rem !important;
+  }
+}
+.cont.contOptions {
+  div {
+    background: transparent;
+    border: none!important;
+    box-sizing: border-box; 
+    padding-left: 0!important;
+
+  }
+  .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+    box-shadow: none !important;
+  }
+}
 .question__inner {
   display: flex;
   flex-direction: column;
@@ -334,6 +381,7 @@ export default {
         margin-bottom: 0.4rem;
       }
     }
+    
     .img__cont {
       position: relative;
       // background: #CFCFCF;

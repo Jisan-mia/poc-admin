@@ -16,7 +16,7 @@
       </div>
 
       <div class="qBottom">
-        <AdminCustomInput 
+        <!-- <AdminCustomInput 
           :isTextArea="true"
           placeholder="উদ্দীপক..."
           v-model="questionTypeTwoMain.description"
@@ -24,7 +24,15 @@
             minHeight: '120px',
             resize: 'vertical'
           }"
-          />
+          /> -->
+          <div class="cont">
+
+          <ckeditor 
+            :editor="editor" 
+            v-model="questionTypeTwoMain.description" 
+            :config="editorConfig" :disabled="false">
+          </ckeditor>
+        </div>
       </div>
     </div>
 
@@ -47,10 +55,17 @@
           }"
           :isTextArea="true"
         /> -->
-        <QuestionTextArea
+        <!-- <QuestionTextArea
           placeholder="প্রশ্ন..."
           v-model="questionTypeTwoMain.question_name"
-        />
+        /> -->
+        <div class="cont">
+          <ckeditor 
+            :editor="editor" 
+            v-model="questionTypeTwoMain.question_name" 
+            :config="editorConfig" :disabled="false">
+          </ckeditor>
+        </div>
         
         </span>
       </p>
@@ -60,7 +75,7 @@
             <span>
               {{key == 'data_one' ? 'i' : key == 'data_two' ? 'ii' : key == 'data_three' ? 'iii' : key == 'data_four' ? 'iv' : ''}}.
             </span>
-            <AdminCustomInput
+            <!-- <AdminCustomInput
               v-model="questionTypeTwoMain[key]"
               :placeholder="questionTypeTwoMain[key]"
               :style="{
@@ -71,7 +86,16 @@
                 fontSize: '16px',
                 fontWeight: '400'
               }"
-              />
+              /> -->
+              <span class="sampleOp">
+                <div class="cont contOptions">
+                  <ckeditor 
+                    :editor="editor" 
+                    v-model="questionTypeTwoMain[key]" 
+                    :config="editorConfig" :disabled="false">
+                  </ckeditor>
+                </div>
+              </span>
           </li>
         </ul>
       </div>
@@ -106,7 +130,7 @@
           />
         </span>
         <span class='input__elm'>
-          <AdminCustomInput 
+          <!-- <AdminCustomInput 
             :placeholder="questionTypeTwoMain.options[index].ans"
             v-model="questionTypeTwoMain.options[index].ans"
             :style="{
@@ -118,7 +142,14 @@
               fontSize: '16px',
               fontWeight: '400'
             }"
-          />
+          /> -->
+          <div class="cont contOptions">
+            <ckeditor 
+              :editor="editor" 
+              v-model="questionTypeTwoMain.options[index].ans" 
+              :config="editorConfig" :disabled="false">
+            </ckeditor>
+          </div>
         </span>
 
       </div>
@@ -146,11 +177,14 @@ import CustomAdminBtn from '../../ui/CustomAdminBtn.vue';
 import QuestionCreateBtns from './QuestionCreateBtns.vue';
 import InputImgComp from '../../ui/InputImgComp.vue';
 import { useStore } from 'vuex';
-import { getNotification } from '../../../api/common';
+import { editorConfig, getNotification } from '../../../api/common';
+
 import ImgInputModel from '../../ui/ImgInputModel.vue';
 import { examPackMutationTypes } from '../../../store/modules/examPack/examPack.mutationTypes';
 import { watch, watchEffect } from '@vue/runtime-core';
 import QuestionTextArea from '../../ui/QuestionTextArea.vue';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+
 export default {
   name: "CreateQuestionTypeB",
   components: { CustomSelect, AdminCustomInput, CustomRadioButton, CustomAdminBtn, QuestionCreateBtns, InputImgComp, ImgInputModel, QuestionTextArea },
@@ -168,6 +202,8 @@ export default {
     // console.log(props.questionTypeTwo);
     const store  = useStore();
     const examAllQuestions = computed(() => store.state.examPackState.examQuestions);
+    const editor = InlineEditor;
+
 
   
     const questionTypeTwoMain = ref({
@@ -392,7 +428,9 @@ export default {
       questionTypeTwoMain,
       handleIInput,
       previewImage,
-      dataOptions
+      dataOptions,
+      editor,
+      editorConfig
     }
   }
 }
@@ -401,6 +439,32 @@ export default {
 <style lang="scss" scoped>
 
 @import '@/styles/config.scss';
+
+.cont {
+  div {
+    background: #fdfdfd;
+    border: 1.8px solid #00A9DC !important;
+    box-sizing: border-box; 
+  }
+  .ck.ck-editor__editable_inline>:last-child {
+    margin-bottom: 0.5rem !important;
+  }
+  .ck.ck-editor__editable_inline>:first-child {
+    margin-top: 0.5rem !important;
+  }
+}
+.cont.contOptions {
+  div {
+    background: transparent;
+    border: none!important;
+    box-sizing: border-box; 
+    padding-left: 0!important;
+
+  }
+  .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+    box-shadow: none !important;
+  }
+}
 .question__inner {
   display: flex;
   flex-direction: column;
@@ -433,6 +497,9 @@ export default {
       display: flex;
       flex-direction: column;
 
+    }
+    .sampleOp {
+      min-width: 100%;
     }
 
     ul {

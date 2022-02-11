@@ -73,3 +73,28 @@ export const arraysCompare = (a1, a2) => {
   
   return reduceArray1.map(item => reduceArray2.includes(item))
 };
+
+
+export const editorConfig = {
+  toolbar: {
+    items: [
+      'heading',
+      '|',
+      'bold',
+      'italic',
+      'underline',
+      'strikethrough',
+      'link',
+      '|',
+      'code',
+      'subscript',
+      'superscript',
+      'MathType',
+      'ChemType',
+      'specialCharacters',
+      'blockQuote'
+    ]
+  },
+  language: 'en',
+  shouldNotGroupWhenFull: true
+}

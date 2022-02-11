@@ -44,6 +44,11 @@
     </CustomAdminBtn>
   </div>
 
+  <!-- ckeditor -->
+  <!-- <div>
+    <CkEditorComp />
+  </div> -->
+
   
 </template>
 
@@ -57,10 +62,11 @@ import { watch, watchEffect } from '@vue/runtime-core';
 import Spinner from "../../ui/Spinner.vue";
 import { v4 as uuidv4 } from 'uuid';
 import { examPackMutationTypes } from "../../../store/modules/examPack/examPack.mutationTypes";
+import CkEditorComp from "./CkEditorComp.vue";
 
 export default {
   name: "CreateAllExamQuestion",
-  components: { CustomSelect, CreateQuestionComp, CustomAdminBtn, Spinner },
+  components: { CustomSelect, CreateQuestionComp, CustomAdminBtn, Spinner, CkEditorComp },
   setup() {
     const store = useStore();
     const selectedExamPack = ref('')
