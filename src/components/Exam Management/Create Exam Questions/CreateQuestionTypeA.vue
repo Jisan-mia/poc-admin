@@ -131,6 +131,7 @@ export default {
       // uuid: uuidv4(), 
       // exam_pack: examPack,     -> these three attribute will come from props always
       // exam_name: examName,
+      id: '',
       isNewQuestion: true,
       uuid: '',
       question_name: '',
@@ -169,8 +170,9 @@ export default {
     // watch(questionTypeOneMain.value, () => {
     //   console.log(questionTypeOneMain.value);
     // })
+
     watch(questionTypeOneMain.value, () => {
-      console.log(questionTypeOneMain.value)
+      // console.log(questionTypeOneMain.value)
       if(props.isFromTypeC) {
         ctx.emit('typeOneQuestion', questionTypeOneMain.value)
       }
@@ -209,10 +211,13 @@ export default {
         await store.dispatch('examPackState/createQuestionTypeOne', question);
         // console.log(examAllQuestions.value)
         const findQ = examAllQuestions.value.find(q => q.uuid == questionTypeOneMain.value.uuid)
-        console.log(findQ)
+        // console.log(findQ)
 
         if(!findQ?.isNewQuestion) {
           questionTypeOneMain.value.isNewQuestion = false
+          questionTypeOneMain.value.id = findQ.id
+          questionTypeOneMain.value.options = findQ.options
+
         }
 
       } catch(err) {
@@ -307,7 +312,7 @@ export default {
 
     const previewImage = ref(null)
     const handleIInput = (e) => {
-      console.log(e)
+      // console.log(e)
       previewImage.value = e;
     }
 

@@ -103,6 +103,7 @@ export default {
         // uuid: uuidv4(),
         // exam_pack: '',
         // exam_name: '',      -> these attributes come from props always when question is added
+        id: '',
         uuid: '',
         isNewQuestion: true,
         type: 'Type 03',
@@ -157,7 +158,7 @@ export default {
 
     const previewImage = ref(null)
     const handleIInput = (e) => {
-      console.log(e)
+      // console.log(e)
       previewImage.value = e;
     }
 
@@ -241,7 +242,7 @@ export default {
 
 
     const checkIsAllValid =()=> {
-      console.log(questionTypeThreeMain.value)
+      // console.log(questionTypeThreeMain.value)
       const isItValid1 = ref(true)
       const isItValid2 = ref(true)
 
@@ -314,6 +315,7 @@ export default {
         const findQ = examAllQuestions.value.find(q => q.uuid == questionTypeThreeMain.value.uuid)
         if(!findQ?.isNewQuestion) {
           questionTypeThreeMain.value.isNewQuestion = false
+          questionTypeThreeMain.value.id = findQ.id;
         }
 
       } catch(err) {
@@ -326,7 +328,7 @@ export default {
 
       if(checkIsAllValid()) {
 
-        console.log(typeOneQuestion.value, typeTwoQuestion.value)
+        // console.log(typeOneQuestion.value, typeTwoQuestion.value)
         const mainQuestionThree = {
           ...questionTypeThreeMain.value,
           question1: {
@@ -348,7 +350,7 @@ export default {
     const handleEditQuestion = async () => {
       if(checkIsAllValid()) {
 
-        console.log(typeOneQuestion.value, typeTwoQuestion.value)
+        // console.log(typeOneQuestion.value, typeTwoQuestion.value)
         const mainQuestionThree = {
           ...questionTypeThreeMain.value,
           question1: {

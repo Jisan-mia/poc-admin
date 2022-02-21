@@ -385,26 +385,27 @@ const actions = {
       const allQuestionWithOptions = await Promise.all(allQuestion.map(setQuestionOption))
       
 
-      
-      // let previousQuestions = context.state.examQuestions;
-      // console.log(previousQuestions, allQuestionWithOptions)
-      // const qNames = previousQuestions.map(q => q.question_name)
-      // const theNewOne = allQuestionWithOptions.find(q => {
-      //   if(qNames.indexOf(q.question_name) !== -1) {
-      //     return q
-      //   }
-      // })
+      /*
+      let previousQuestions = context.state.examQuestions;
+      console.log(previousQuestions, allQuestionWithOptions)
+      const qNames = previousQuestions.map(q => q.question_name)
+      const theNewOne = allQuestionWithOptions.find(q => {
+        if(qNames.indexOf(q.question_name) !== -1) {
+          return q
+        }
+      })
 
-      // console.log(theNewOne)
-      // if(theNewOne?.question_name) {
-      //   const filterQ = previousQuestions.filter(q => q.question_name !== theNewOne.question_name)
-      //   previousQuestions = [...filterQ, theNewOne]
+      console.log(theNewOne)
+      if(theNewOne?.question_name) {
+        const filterQ = previousQuestions.filter(q => q.question_name !== theNewOne.question_name)
+        previousQuestions = [...filterQ, theNewOne]
 
-      // } else {
-      //   previousQuestions = [...allQuestionWithOptions]
-      // }
+      } else {
+        previousQuestions = [...allQuestionWithOptions]
+      }
 
-      // const finalQuestions = [...previousQuestions]
+      const finalQuestions = [...previousQuestions]
+      */
 
       context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS, [...allQuestionWithOptions, ...allQuestionThree])
     } else {
@@ -434,6 +435,7 @@ const actions = {
   
     const res = await examPackApi.createQuestionOneTwo(data, 'https://www.exam.poc.ac/api/create_q_one/');
     const resData = await res.data;
+    console.log(resData)
     if(resData) {
       const qId = resData.id;
       const allMainOptions = allOptions.map(option => {
@@ -442,17 +444,25 @@ const actions = {
           Question: qId
         }
       })
+
+      const setAllOp = async (option) => {
+        const opRes = await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
+        const opData = await opRes.data
+        return opData
+      }
+
+      let allOptionsServer = await Promise.all(allMainOptions.map(setAllOp))
+      // console.log(allOptionsServer)
       
-      allMainOptions.forEach(async (option) => {
-        await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
-      })
+      // allMainOptions.forEach(async (option) => {
+      //   await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_one/`)
+      // })
 
       const allQuestion = context.state.examQuestions;
-      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
-      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload,options: allOptionsServer, id: resData.id, isNewQuestion: false} : q)
+      context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,[...upd])
 
-
-
+      // context.dispatch('loadExamQuestions',  exam_name)
 
 
 
@@ -490,13 +500,25 @@ const actions = {
           Question: qId
         }
       })
+
+
+      const setAllOp = async (option) => {
+        const opRes = await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
+        const opData = await opRes.data
+        return opData
+      }
+
+      let allOptionsServer = await Promise.all(allMainOptions.map(setAllOp))
+      // console.log(allOptionsServer)
       
-      allMainOptions.forEach(async (option) => {
-        await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
-      })
+      // allMainOptions.forEach(async (option) => {
+      //   await examPackApi.createQuestionOneTwoOption(option, `https://www.exam.poc.ac/api/ans_type_two/`)
+      // })
+
       const allQuestion = context.state.examQuestions;
-      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload,id: resData.id, options:allOptionsServer,  isNewQuestion: false} : q)
       context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+
 
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
 
@@ -545,8 +567,13 @@ const actions = {
     const resData = await res?.data;
     if(resData) {
       const allQuestion = context.state.examQuestions;
-      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload, isNewQuestion: false} : q)
+
+      
+      const upd = allQuestion.map(q => q.uuid == payload.uuid ? {...q, ...payload,id: resData.id, isNewQuestion: false} : q)
       context.commit(examPackMutationTypes.SET_EXAM_QUESTIONS,upd)
+
+
+
       context.dispatch('notifications/add', {type: 'success', message: 'Successfully Created'} , {root: true})
     } else {
       throw new Error('could not create question type three')

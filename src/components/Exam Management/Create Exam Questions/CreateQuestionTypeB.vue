@@ -210,6 +210,7 @@ export default {
       // uuid: uuidv4(), 
       // exam_pack: examPack,     -> these three attribute will come from props always
       // exam_name: examName,
+      id: '',
       isNewQuestion: true,
       uuid: '',
       Q_image: '',
@@ -319,6 +320,10 @@ export default {
         // console.log(findQ)
         if(!findQ?.isNewQuestion) {
           questionTypeTwoMain.value.isNewQuestion = false
+          questionTypeTwoMain.value.id = findQ.id;
+          questionTypeTwoMain.value.options = findQ.options
+
+
         }
 
       } catch(err) {
@@ -364,7 +369,7 @@ export default {
         })
 
         const findCorrectAns = mainOptions.find(o => o.is_correct)
-        console.log(findCorrectAns)
+        // console.log(findCorrectAns)
         if(!findCorrectAns?.is_correct) {
           store.dispatch('notifications/add', getNotification('warning', `Select the correct ans`))
 
@@ -400,7 +405,7 @@ export default {
     }
 
     const handleDeleteQuestion = () => {
-      console.log('delete quesiton', questionTypeTwoMain.value, 'Type 02');
+      // console.log('delete quesiton', questionTypeTwoMain.value, 'Type 02');
       // ctx.emit('onDeleteQuestion', questionTypeTwoMain.value, 'Type 02')
       if(questionTypeTwoMain.value.isNewQuestion) {
         // const filteredQ = examAllQuestions.value.filter(question => question.uuid !== questionTypeTwoMain.value.uuid)
@@ -415,7 +420,7 @@ export default {
 
     const previewImage = ref(null)
     const handleIInput = (e) => {
-      console.log(e)
+      // console.log(e)
       previewImage.value = e;
     }
 

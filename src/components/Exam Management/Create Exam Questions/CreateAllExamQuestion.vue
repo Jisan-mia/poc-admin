@@ -106,9 +106,9 @@ export default {
         await store.dispatch('examPackState/loadExamQuestions', +selectedExam.value);
         console.log(examAllQuestions.value)
         
-        setTimeout(() => {
-          qLoading.value = false
-        }, 1000)
+        qLoading.value = false
+        // setTimeout(() => {
+        // }, 1000)
 
       } catch(err) {
         qLoading.value = false
