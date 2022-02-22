@@ -157,9 +157,12 @@ export default {
 
      const chartPercents = computed(() => {
       return previousExamReport.value.map(report => {
+        const mainScore = Number(report.score) + Number(report.negative_marking)
+        const scoreM = Math.round(mainScore*100)/100
+
         return {
           exam_name: report.Exam_name,
-          percent: (Number(report.score)/Number(report.total_mark)) * 100
+          percent: (scoreM/Number(report.total_mark)) * 100
         }
       })
     })
@@ -196,7 +199,9 @@ export default {
         return 0;
       }
       const allAverages = previousExamReport.value.map(report => {
-        return (Number(report.score)/Number(report.total_mark)) * 100
+        // return (Number(report.score)/Number(report.total_mark)) * 100
+        const mainScore = Number(report.score) + Number(report.negative_marking)
+        return (mainScore/Number(report.total_mark)) * 100
       })
       return allAverages.reduce((acc, currentAverage) => acc + currentAverage, 0) / allAverages.length;
     });
@@ -205,7 +210,14 @@ export default {
       if(previousExamReport.value.length === 0) {
         return 0;
       }
-      const passed = previousExamReport.value.filter(report => report.score >= report.pass_mark).length || 0;
+      // const passed = previousExamReport.value.filter(report => report.score >= report.pass_mark).length || 0;
+      const passed = previousExamReport.value.filter(report => {
+        if(report.score + report.negative_marking > report.pass_mark) {
+          // console.log(report.score, report.negative_marking)
+          return report
+        } 
+      }).length || 0;
+      
       return (passed/previousExamReport.value.length) * 100
     }) 
 

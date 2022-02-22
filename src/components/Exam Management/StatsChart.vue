@@ -49,6 +49,9 @@ export default {
       xaxis: {
         categories: [...subs],
       },
+      yaxis: {
+        min: 0
+      },
       plotOptions: {
         bar: {
           horizontal: false
