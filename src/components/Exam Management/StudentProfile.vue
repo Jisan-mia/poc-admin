@@ -158,8 +158,9 @@ export default {
      const chartPercents = computed(() => {
       return previousExamReport.value.map(report => {
         const mainScore = Number(report.score) + Number(report.negative_marking)
-        const sM = (mainScore/Number(report.total_mark))
+        const sM = (mainScore/Number(report.total_mark)) * 100
         const scorePercent = Math.round(sM*100)/100
+        console.log(mainScore, sM, scorePercent)
 
         return {
           exam_name: report.Exam_name,
