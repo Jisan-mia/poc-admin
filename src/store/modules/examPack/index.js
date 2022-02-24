@@ -783,6 +783,9 @@ const actions = {
       }
 
       context.dispatch('notifications/add', notification , {root: true})
+      throw new Error('could not get answer sheet')
+
+
     }
   }
 }

@@ -43,7 +43,7 @@ const routes = [
         }
     },
     {
-        path: '/result/:id',
+        path: '/student/:studentId/result/:id',
         name: 'ViewDownloadComp',
         component: lazyLoadAdmin('ViewDownloadComp'),
         meta: {

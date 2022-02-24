@@ -125,7 +125,7 @@ export default {
         const allStudentListD = computed(() => store.state.adminState.studentList);
         const boardOptions = computed(() => store.state.batchSettings.boardOptions);
 
-        console.log(allStudentListD.value);
+        // console.log(allStudentListD.value);
         // const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') ? img : `https://www.exam.poc.ac${img}`)
         const imageUrl = computed(() => (img) => img.includes("https://www.exam.poc.ac") || img.includes("http://www.exam.poc.ac") ? img : `https://www.exam.poc.ac${img}`);
         

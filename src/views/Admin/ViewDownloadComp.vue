@@ -39,9 +39,10 @@ export default {
     const store = useStore(); 
     const examLists = computed(() => store.state.examPackState.examLists)
     // console.log(examLists.value)
-    const answerSheet = computed(() => store.state.examResult.answerSheet)
+    const answerSheet = computed(() => store.state.examPackState.answerSheet)
 
     const {id} = route.params;
+
 
     const isAuthenticated = computed(() => store.state.userState.user.isAuthenticated)
     const isLoading = ref(false);
@@ -58,7 +59,7 @@ export default {
 
       } catch(err) {
         console.log(err)
-        router.push('/dashboard')
+        router.go(-1)
       }
     }
 

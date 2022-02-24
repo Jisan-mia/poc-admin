@@ -3,14 +3,18 @@
 
     <div class="item1">
       <div class="exam__img">
-        <img src="/images/placeholderImg.svg" alt="">
+        <img :src="imageUrl(currentExam.cover_photo)" alt="">
       </div>
     </div>
 
     <div class="item2">
-      <h3>Physics 1s Paper-2</h3>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam excepturi possimus officia porro eius ipsum saepe.</p>
-      <p>10:30 AM | Sunday, 19/10/2021</p>
+      <h3> 
+        {{currentExam.Exam_name}}
+      </h3>
+      <p>
+        {{currentExam.details}}
+      </p>
+      <p>{{timeF(currentExam.Exam_end_date,currentExam.Exam_end_time)}} | {{dayName}}, {{endDate}}</p>
     </div>
 
     <div class="item3">
@@ -19,11 +23,17 @@
         <div class="more__info">
           <div class="group">
             <p class="label">Batch</p>
-            <p class="value">HSC2021</p>
+            <p class="value">
+              {{currentExam.level}}{{currentExam.batch}}
+            </p>
           </div>
           <div class="group">
-            <p class="label">Exam Pack</p>
-            <p class="value">Elite Exam Mania</p>
+            <p class="label">
+              Exam Pack
+            </p>
+            <p class="value">
+              {{currentExamPack.ExamPack_name}}
+            </p>
           </div>
         </div>
       </div>
@@ -33,15 +43,21 @@
         <div class="more__info mark__info">
           <div class="group">
             <p class="label">Total Mark</p>
-            <p class="value">30</p>
+            <p class="value">
+              {{currentExam.total_mark}}
+            </p>
           </div>
           <div class="group">
             <p class="label">Per Question Mark</p>
-            <p class="value">1</p>
+            <p class="value">
+              {{currentExam.mark_per_question}}
+            </p>
           </div>
           <div class="group">
             <p class="label">Pass Mark</p>
-            <p class="value">12.5</p>
+            <p class="value">
+              {{currentExam.pass_mark}}
+            </p>
           </div>
         </div>
       </div>
@@ -52,13 +68,15 @@
       <div>
         <h4>Negative Marking: </h4>
         <span>
-          <ToggleSwitch v-model="isSwitchChecked" :disabled="true"/>
+          <ToggleSwitch v-model="currentExam.isNegativeMarking" :disabled="true"/>
         </span>
       </div>
       <div class="negative__amount">
         <h4>Amounts Per Mistake: </h4>
         <div class="amount__box">
-          <span> 0.2 </span>
+          <span> 
+            {{currentExam.amount_per_mistake}}
+          </span>
         </div>
       </div>
     </div>
@@ -67,17 +85,61 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import ToggleSwitch from "../ui/ToggleSwitch.vue";
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import dayjs from "dayjs";
 export default {
-    name: "ExamPageExamDetail",
-    components: { ToggleSwitch },
-    setup(){
-      const isSwitchChecked = ref(true);
-      return {
-        isSwitchChecked,
-      }
+  name: "ExamPageExamDetail",
+  components: { ToggleSwitch },
+  setup(){
+    const route = useRoute();
+    const store = useStore();
+    const examPacks = computed(() => store.state.examPackState.examPacks)
+    const examLists = computed(() => store.state.examPackState.examLists)
+
+    const { id } = route.params;
+    //console.log({id})
+
+
+    const currentExam = computed(() => examLists.value.find(exam => exam.id == id));
+
+    // const currentExamPack = computed(() =>  examPacks.value.find(pack => pack.id == currentExam.value.id));
+    const currentExamPack = computed(() =>  examPacks.value.find(pack => pack.id == currentExam.value.exam_pack));
+
+    //console.log(currentExamPack.value)
+
+    const endDate = computed(() => dayjs(currentExam.value.Exam_end_date).format('DD/MM/YYYY'))
+    const endTime = currentExam.value.Exam_end_time;
+  
+    const days = ref(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
+    const dayNum = computed(() => dayjs(currentExam.value.Exam_end_date.value).day())
+    //console.log(dayNum.value)
+
+    // days[dayNum.value]
+    const timeF = computed(() => (date, time) => {
+        const examDate = dayjs(date + time).format("YYYY-MM-DD hh:mm:ss A");
+        return dayjs(examDate).format("hh:mm A");
+    });
+
+
+    const dayName = days.value[dayNum.value]
+
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
+
+
+    return {
+      currentExam,
+      currentExamPack,
+      endDate,
+      endTime,
+      dayName,
+      timeF,
+      imageUrl
+
     }
+  }
 }
 </script>
 
@@ -99,8 +161,13 @@ export default {
     border-radius: 18px;
     width: 100%;
     height: 155px;
+    overflow: hidden;
     img{
-      max-width: 75px;
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      object-fit: cover;
+      background-position: center center;
     }
   }
 

@@ -161,6 +161,11 @@
             Negative Marking
           </span>
         </td>
+        <td>
+          <span>
+            Answer Sheet
+          </span>
+        </td>
       </tr>
       
 
@@ -203,6 +208,11 @@
             {{Math.round(report.negative_marking*100)/100}}
           </span>
         </td>
+        <td class="answer__sheet" @click="handleViewDownload(report.exam_name, report.student)">
+          <span>
+            View Answer sheet
+          </span>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -211,7 +221,7 @@
 
 <script>
 import { computed, onBeforeMount, onMounted, ref, watchEffect } from '@vue/runtime-core';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
 import CustomAdminBtn from '../ui/CustomAdminBtn.vue';
@@ -221,6 +231,7 @@ export default {
   name: "SpecificExamReportComp",
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const store = useStore();
     const selectedFilter = ref(''); // 'highToLow', 'lowToHigh', 'timestamp'
     const boardSelected = ref('');
@@ -260,6 +271,7 @@ export default {
         }
       } )
     })
+    // console.log(specificReportsStateM.value)
     
     
 
@@ -374,6 +386,10 @@ export default {
    
     const dayName = days.value[dayNum.value];
 
+    const handleViewDownload= async (id, studentId) => {
+      router.push({name:'ViewDownloadComp',params:{studentId:studentId, id: id}})
+    }
+
     
     
     return {
@@ -392,7 +408,8 @@ export default {
       isActive3,
       imageUrl,
       timeStampF,
-      boardOptions
+      boardOptions,
+      handleViewDownload
     };
   },
   components: { CustomAdminBtn, AdminCustomInput, ToggleSwitch }
@@ -414,11 +431,11 @@ table {
   tbody tr{
     border-bottom: 1px solid #CDCDCD;
     display: grid;
-    grid-template-columns: 1fr 2fr 1.5fr 1.5fr 1fr 1.5fr;
+    grid-template-columns: 1fr 2fr 1.5fr 1.7fr 1fr 1.5fr 1.5fr;
     // grid-template-columns: repeat(6, 1fr);
     @include maxMedia(768px) {
       // grid-template-columns: repeat(6, 200px);
-      grid-template-columns: 100px 260px 170px 150px 100px 100px;
+      grid-template-columns: 100px 260px 170px 150px 100px 100px 120px;
     }
 
     &:first-child{
@@ -453,6 +470,11 @@ table {
     @include maxMedia(968px) {
       padding: 0.5rem 0.9rem 0.5rem 0;
     }
+  }
+  .main_row td.answer__sheet span {
+    text-decoration-line: underline;
+    font-weight: 600;
+    cursor: pointer;
   }
   .main_row td {
     span{
@@ -508,7 +530,8 @@ table {
     // grid-column: span 2
     min-width: 300px;
   }
-  tr td:last-child {
+  
+  tr td:last-child , tr td:nth-child(6) {
     text-align: center;
     justify-content: center;
   }

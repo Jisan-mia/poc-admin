@@ -109,7 +109,7 @@
           </td>
 
           <td class="answer__sheet">
-            <span>
+            <span @click="handleViewDownload(exam.exam_name)">
               View/Download
             </span>
           </td>
@@ -154,6 +154,8 @@ export default {
         return studentWiseReportings.value[profile.value.user]
       } return []
     });
+    console.log(previousExamReport.value)
+
 
      const chartPercents = computed(() => {
       return previousExamReport.value.map(report => {
@@ -236,6 +238,12 @@ export default {
     const strJoin = (str) => {
       return str.split(' ').join('-')
     }
+
+
+    const handleViewDownload= async (examId) => {
+      router.push({name:'ViewDownloadComp',params:{studentId:studentId, id: examId}})
+    }
+    
     return {
       previousExam,
       upcomingExams,
@@ -247,7 +255,8 @@ export default {
       averageMark,
       passedPercentage,
       failedPercentage,
-      chartPercents
+      chartPercents,
+      handleViewDownload
     }
   }
 }

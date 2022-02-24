@@ -59,7 +59,9 @@ export default {
     return {
       isLoading,
       toggleActive,
-      isActive
+      isActive,
+      visibleSidebar,
+      setVisibleSidebar
     }
   }
 }
