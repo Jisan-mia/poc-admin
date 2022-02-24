@@ -199,8 +199,19 @@ export default {
   setup(props, context) {
     const store = useStore();
     const examPacks = computed(() => store.state.examPackState.examPacks);
+    const examLists = computed(() => store.state.examPackState.examLists);
+
     const batchOptions = computed(() => store.state.batchSettings.batchOptions);
     const levelOptions = computed(() => store.state.batchSettings.levelOptions);
+
+    const examNamesList = computed(() =>{
+      let examNames = examLists.value.map(exam => exam.Exam_name)
+      if(!props.isExamManageCreate) {
+        examNames = examNames.filter(name => name !== props.editExam.Exam_name)
+      }
+      // console.log(examNames)
+      return examNames
+    })
     
     const examInfo = ref({
       cover_photo: '',
@@ -226,7 +237,7 @@ export default {
     })
 
     examInfo.value = !props.isExamManageCreate ? {...props.editExam} : {...examInfo.value}
-    console.log(examInfo.value);
+    // console.log(examInfo.value);
 
     watchEffect(() => {
       if(examInfo.value.mark_per_question && examInfo.value.question_amount ) {
@@ -242,6 +253,12 @@ export default {
     // validate field 
     const isValid = () => {
       const isValid = ref(true)
+      // console.log(examNamesList.value, examInfo.value.Exam_name)
+      if(examNamesList.value.indexOf(examInfo.value.Exam_name) !== -1) {
+          store.dispatch('notifications/add', getNotification('warning', `Exam name already exist`))
+
+        return
+      }
       for(let key in examInfo.value) {
         if(examInfo.value[key] == '') {
           if(key == 'amount_per_mistake' || key == 'isNegativeMarking' || key == 'isRandomized' || key == 'isSorted') {
