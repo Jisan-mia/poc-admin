@@ -10,7 +10,9 @@ const state = {
   examPacks: [],
   examLists: [],
   examQuestions: [],
-  savedExamQuestions: []
+  savedExamQuestions: [],
+  answerSheet: []
+
 }
 
 const mutations = {
@@ -30,6 +32,9 @@ const mutations = {
   },
   setIsCreateExamFromPack(state, payload) {
     state.isCreateExamFromPack = payload
+  },
+  setAnswerSheet(state, payload) {
+    state.answerSheet = payload
   }
 }
 
@@ -760,6 +765,25 @@ const actions = {
       throw new Error('could not create question type three')
     }
 
+  },
+
+  async getViewDownloadAnswer(context, examId) {
+    const res = await examPackApi.getViewDownload(examId)
+    console.log(res)
+    const data = await res.data
+    if(data[0]) {
+      const viewDownloadAnswer = JSON.parse(data[0].all_question)
+      // console.log(viewDownloadAnswer)
+      context.commit('setAnswerSheet',viewDownloadAnswer )
+
+    } else {
+      const notification = {
+        type: 'error',
+        message: 'Could not get your answer sheet'
+      }
+
+      context.dispatch('notifications/add', notification , {root: true})
+    }
   }
 }
 

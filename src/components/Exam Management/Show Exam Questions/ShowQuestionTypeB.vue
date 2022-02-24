@@ -1,22 +1,29 @@
 <template>
+<div class="two_main">
+  <div class="img__container" v-if="examQuestion?.Q_image">
+    <img :src="imageUrl(examQuestion.Q_image)" alt="">
+  </div>
+
   <div class="question__cont">
-    <div class="paragraph" v-if="examQuestion?.paragraph">
-      {{examQuestion.paragraph}}
+    <div class="paragraph" v-if="examQuestion?.description">
+      <ShowCkContent :content="examQuestion.description" />
     </div>
     <div class="hints">
       <p class="hints__header">
-        <span>{{examQuestion.questionNo}}.</span>
+        <span>{{index}}.</span>
         <span>
-          {{examQuestion.hintsHeader}}
+          <ShowCkContent :content="examQuestion.question_name" />
         </span>
       </p>
       <div class="hints__option">
-        <p v-for="key in Object.keys(examQuestion.hintsOption)" :key="key">
-          <span>
+        <p v-for="key in Object.keys(allHints)" :key="key">
+          <span v-if="allHints[key]">
             {{key}}.
           </span>
-          <span>
-            {{examQuestion.hintsOption[key]}}
+          <span v-if="allHints[key]">
+            <!-- {{allHints[key]}} -->
+            <ShowCkContent :content="allHints[key]" />
+
           </span>
         </p>
       </div>
@@ -24,45 +31,68 @@
 
     <div class="options">
       <p class="options__header">
-        {{examQuestion.optionsHeader}}
+        নিচের কোনটি সঠিক/Which one is correct?
       </p>
 
-      <div class="item__cont">
-        <CustomRadioButton
-          v-for="option in examQuestion.options"
-          :key="option"
-          :option="option"
-          :name='questionNo'
-          v-model="selectedOption"
+      <div class="item__cont" v-if="isViewAnswerSheet">
+        <AnswerSheetRadioGroup 
+          :options="examQuestion.options"
+          :selected="examQuestion.selectedAns"
         />
       </div>
+
+
+      <span class="correct_ans" v-if="isViewAnswerSheet">
+        Correct Ans:  <span>
+          <ShowCkContent :content="examQuestion.options.find(item => item.is_correct == true).ans"/>
+        </span>
+      </span>
+
     </div>
+  </div>
   </div>
 </template>
 
 <script>
 import { computed, ref } from '@vue/reactivity';
 import CustomRadioButton from "../../ui/CustomRadioButton.vue"
-import { watchEffect } from '@vue/runtime-core';
+import ShowCkContent from './ShowCkContent.vue';
+import AnswerSheetRadioGroup from '../../ui/AnswerSheetRadioGroup.vue';
 export default {
   name: "ShowQuestionTypeB",
-  components: { CustomRadioButton },
+  components: { CustomRadioButton, ShowCkContent, AnswerSheetRadioGroup },
   props: {
     examQuestion: {
-        type: Object
+      type: Object
+    },
+    index: {
+      type: Number
+    },
+    isViewAnswerSheet: {
+      type: Boolean,
+      default: () => false
     }
   },
   setup(props) {
-    const questionNo = computed(() => {
-        return props.examQuestion.questionNo
+    const examQuestion = props.examQuestion;
+
+    const imageUrl = computed(() => (img) => img.includes('https://www.exam.poc.ac') || img.includes('http://www.exam.poc.ac')  ? img : `https://www.exam.poc.ac${img}`)
+
+
+    const allHints = computed(() => {
+      return {
+        'i': examQuestion?.data_one,
+        'ii': examQuestion?.data_two,
+        'iii': examQuestion?.data_three,
+        'iv': examQuestion?.data_four
+      }
     })
-    const selectedOption = ref('')
-    watchEffect(() => {
-      console.log('selected', selectedOption.value)
-    })
+    
+    
+
     return {
-      selectedOption,
-      questionNo
+      allHints,
+      imageUrl
     };
   },
 }
@@ -70,6 +100,35 @@ export default {
 
 <style scoped lang="scss">
 @import '@/styles/config.scss';
+
+
+.img__container{
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 190px;
+  max-width: 400px;
+  overflow: hidden;
+  display: block;
+  align-self: center;
+  @include maxMedia(768px) {
+    max-width: 100%;
+    height: 200px;
+  }
+}
+.img__container img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-position: center center;
+  border-radius: 5px;
+}
+
+.two_main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .pDefault {
   font-size: 1rem;
   color: rgb(0 0 0 / 70%);
@@ -97,7 +156,7 @@ export default {
       color: #000;
       display: flex;
       justify-content: flex-start;
-      align-items: center;
+      align-items: baseline;
       gap: 0.3rem;
     }
 
@@ -108,6 +167,9 @@ export default {
       gap: 0.45rem;
       p{
         @extend .pDefault;
+        display: flex;
+        gap: 0.5rem;
+        align-items: baseline;
       }
     }
   }
@@ -127,6 +189,20 @@ export default {
       @include flexVertical;
       gap: 0.4rem;
       justify-content: center;
+    }
+
+    .correct_ans {
+      display: flex;
+      justify-content: flex-start;
+      align-items: baseline;
+      gap: 0.5rem;
+      span {
+        background: #0080000f;
+        color: green;
+        padding: 5px 8px;
+        border-radius: 3px;
+        font-weight: 500;
+      }
     }
   }
 

@@ -368,6 +368,26 @@ const editQuestionAndOption = async (data, url) => {
 }
 
 
+const getViewDownload = async (examId) => {
+  try{
+    const res = await axios.get(`https://exam.poc.ac/api/get_ans_sheet/${examId}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    }
+    );
+    //console.log(res)
+    if(res.data.code !== 200) {
+      throw Error('Error getting answer sheet')
+    }
+    return res.data
+  } catch (err) {
+    //console.log(err.message)
+    return 'error getting student answer sheet'
+  }
+
+}
 
 
 
@@ -387,7 +407,9 @@ export default {
   createQuestionOneTwo,
   createQuestionOneTwoOption,
   deleteQuestionOneTwo,
-  editQuestionAndOption
+  editQuestionAndOption,
+
+  getViewDownload
 
 
 
