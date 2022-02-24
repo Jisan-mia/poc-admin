@@ -205,9 +205,9 @@ export default {
     const levelOptions = computed(() => store.state.batchSettings.levelOptions);
 
     const examNamesList = computed(() =>{
-      let examNames = examLists.value.map(exam => exam.Exam_name)
+      let examNames = examLists.value.map(exam => exam.Exam_name.trim())
       if(!props.isExamManageCreate) {
-        examNames = examNames.filter(name => name !== props.editExam.Exam_name)
+        examNames = examNames.filter(name => name !== props.editExam.Exam_name.trim())
       }
       // console.log(examNames)
       return examNames
@@ -254,7 +254,7 @@ export default {
     const isValid = () => {
       const isValid = ref(true)
       // console.log(examNamesList.value, examInfo.value.Exam_name)
-      if(examNamesList.value.indexOf(examInfo.value.Exam_name) !== -1) {
+      if(examNamesList.value.indexOf(examInfo.value.Exam_name.trim()) !== -1) {
           store.dispatch('notifications/add', getNotification('warning', `Exam name already exist`))
 
         return
